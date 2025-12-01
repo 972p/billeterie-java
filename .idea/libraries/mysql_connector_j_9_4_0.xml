@@ -2,6 +2,7 @@
   <library name="mysql-connector-j-9.4.0">
     <CLASSES>
       <root url="file://$USER_HOME$/JavaFX/javafx-sdk-21.0.9/lib" />
+      <root url="jar://$USER_HOME$/mysql-connector-j-9.5.0/mysql-connector-j-9.5.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <NATIVE>

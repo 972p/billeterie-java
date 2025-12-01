@@ -4,11 +4,14 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/views" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/ressource" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/ressource/views" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/controllers/billet" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/controllers/evenement" type="java-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="file://$USER_HOME$/JavaFX/javafx-sdk-21.0.9/lib" />
@@ -19,6 +22,15 @@
         </NATIVE>
         <SOURCES />
         <jarDirectory url="file://$USER_HOME$/JavaFX/javafx-sdk-21.0.9/lib" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/mysql-connector-j-9.5.0/mysql-connector-j-9.5.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
   </component>

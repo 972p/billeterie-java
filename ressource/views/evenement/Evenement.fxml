@@ -7,9 +7,9 @@
 <VBox spacing="20.0" alignment="TOP_CENTER" prefHeight="500.0" prefWidth="600.0"
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="controllers.evenement.EvenementController">
-    
-    <!-- Titre -->
+
     <children>
+        <!-- Titre -->
         <Label text="Évènements">
             <font>
                 <Font size="33.0"/>
@@ -21,14 +21,17 @@
             <TextField fx:id="event_field" promptText="Rechercher un évènement" prefWidth="250"/>
             <Button fx:id="create_event" text="Créer Évènement"/>
             <Button fx:id="show_event" text="Consulter Évènement"/>
+            <Button fx:id="delete_event" text="Supprimer Évènement"/>
         </HBox>
 
         <!-- TableView des évènements -->
         <TableView fx:id="event_table" prefHeight="300.0" prefWidth="580.0">
             <columns>
                 <TableColumn fx:id="colTitre" text="Titre" prefWidth="200"/>
-                <TableColumn fx:id="colDateDebut" text="Date début" prefWidth="180"/>
-                <TableColumn fx:id="colLieu" text="Lieu" prefWidth="200"/>
+                <!-- Temps en minutes -->
+                <TableColumn fx:id="colTemps" text="Temps (min)" prefWidth="180"/>
+                <!-- Description courte -->
+                <TableColumn fx:id="colDescriptionCourte" text="Description courte" prefWidth="200"/>
             </columns>
         </TableView>
 
