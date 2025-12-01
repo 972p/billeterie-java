@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.billet.BilletDetailController"
+            prefWidth="500" prefHeight="400">
+
+    <children>
+
+        <Label fx:id="title" text="Détail du Billet" layoutX="130" layoutY="20">
+            <font><Font size="30"/></font>
+        </Label>
+
+        <Label text="ID :" layoutX="50" layoutY="100"/>
+        <Label fx:id="idLabel" layoutX="200" layoutY="100"/>
+
+        <Label text="Client :" layoutX="50" layoutY="140"/>
+        <Label fx:id="clientLabel" layoutX="200" layoutY="140"/>
+
+        <Label text="Évènement :" layoutX="50" layoutY="180"/>
+        <Label fx:id="eventLabel" layoutX="200" layoutY="180"/>
+
+        <Label text="Date :" layoutX="50" layoutY="220"/>
+        <Label fx:id="dateLabel" layoutX="200" layoutY="220"/>
+
+        <Label text="Tarif :" layoutX="50" layoutY="260"/>
+        <Label fx:id="tarifLabel" layoutX="200" layoutY="260"/>
+
+    </children>
+
+</AnchorPane>

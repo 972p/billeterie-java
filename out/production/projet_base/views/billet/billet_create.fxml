@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.billet.BilletCreateController"
+            prefWidth="500" prefHeight="400">
+
+    <children>
+
+        <Label text="Créer un Billet" layoutX="160" layoutY="20">
+            <font><Font size="30"/></font>
+        </Label>
+
+        <Label text="Client :" layoutX="50" layoutY="100"/>
+        <ComboBox fx:id="clientCombo" layoutX="150" layoutY="95" prefWidth="250"/>
+
+        <Label text="Évènement :" layoutX="50" layoutY="150"/>
+        <ComboBox fx:id="eventCombo" layoutX="150" layoutY="145" prefWidth="250"/>
+
+        <Label text="Séance :" layoutX="50" layoutY="200"/>
+        <ComboBox fx:id="seanceCombo" layoutX="150" layoutY="195" prefWidth="250"/>
+
+        <Label text="Tarif :" layoutX="50" layoutY="250"/>
+        <ComboBox fx:id="tarifCombo" layoutX="150" layoutY="245" prefWidth="250"/>
+
+        <Button text="Valider" layoutX="200" layoutY="320" prefWidth="100"
+                fx:id="validateBtn" onAction="#handleCreate"/>
+
+    </children>
+
+</AnchorPane>
