@@ -34,6 +34,7 @@ public class EvenementController {
     // Boutons actions
     @FXML private Button create_event;
     @FXML private Button show_event;
+    @FXML private Button edit_event;
     @FXML private Button delete_event;
 
     // DAO
@@ -69,6 +70,7 @@ public class EvenementController {
         // Boutons
         create_event.setOnAction(e -> ouvrirFenetreCreation());
         show_event.setOnAction(e -> consulterEvenementSelectionne());
+        edit_event.setOnAction(e -> modifierEvenementSelectionne());
         delete_event.setOnAction(e -> supprimerEvenementSelectionne());
     }
 
@@ -79,11 +81,17 @@ public class EvenementController {
             eventsData.setAll(events);
             event_table.setItems(eventsData);
             labelPage.setText("Page " + page);
+
+            // Désactiver / activer les boutons
+            prevPage.setDisable(page <= 1);
+            nextPage.setDisable(events.size() < LIMIT); // pas de page suivante si moins que LIMIT
         } catch (SQLException e) {
             e.printStackTrace();
             montrerAlerte("Erreur lors du chargement des évènements.");
         }
     }
+
+
 
     @FXML
     private void nextPage() {
@@ -211,6 +219,86 @@ public class EvenementController {
         alert.showAndWait();
     }
 
+    // === Modification ===
+    private void modifierEvenementSelectionne() {
+        Evenement selected = event_table.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            montrerAlerte("Veuillez sélectionner un évènement à modifier.");
+            return;
+        }
+
+        Dialog<Evenement> dialog = new Dialog<>();
+        dialog.setTitle("Modifier un évènement");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        TextField titreField = new TextField(selected.getTitre());
+        TextField descCourteField = new TextField(selected.getDescriptionCourte());
+        TextField descLongueField = new TextField(selected.getDescriptionLongue());
+        TextField dureeField = new TextField(String.valueOf(selected.getDuree()));
+        TextField langueField = new TextField(selected.getLangue());
+        TextField ageMinField = new TextField(String.valueOf(selected.getAgeMin()));
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(10));
+
+        grid.addRow(0, new Label("Titre:"), titreField);
+        grid.addRow(1, new Label("Description courte:"), descCourteField);
+        grid.addRow(2, new Label("Description longue:"), descLongueField);
+        grid.addRow(3, new Label("Durée (min):"), dureeField);
+        grid.addRow(4, new Label("Langue:"), langueField);
+        grid.addRow(5, new Label("Âge minimum:"), ageMinField);
+
+        dialog.getDialogPane().setContent(grid);
+
+        var okButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.disableProperty().bind(
+                Bindings.or(
+                        titreField.textProperty().isEmpty(),
+                        dureeField.textProperty().isEmpty()
+                )
+        );
+
+        dialog.setResultConverter(button -> {
+            if (button == ButtonType.OK) {
+                try {
+                    int duree = Integer.parseInt(dureeField.getText());
+                    int ageMin = ageMinField.getText().isEmpty()
+                            ? 0
+                            : Integer.parseInt(ageMinField.getText());
+
+                    // On retourne un nouvel Evenement avec le MÊME id
+                    return new Evenement(
+                            selected.getId(),
+                            titreField.getText(),
+                            descCourteField.getText(),
+                            descLongueField.getText(),
+                            duree,
+                            langueField.getText(),
+                            ageMin
+                    );
+                } catch (NumberFormatException e) {
+                    montrerAlerte("Durée et âge minimum doivent être des nombres.");
+                }
+            }
+            return null;
+        });
+
+        Optional<Evenement> result = dialog.showAndWait();
+
+        result.ifPresent(ev -> {
+            try {
+                dao.modifier(ev); // ICI: appel à ta méthode DAO
+                chargerPage(); // on recharge la page
+            } catch (Exception e) {
+                e.printStackTrace();
+                montrerAlerte("Erreur lors de la modification de l'évènement.");
+            }
+        });
+    }
+
+
     // === Suppression ===
     private void supprimerEvenementSelectionne() {
         Evenement selected = event_table.getSelectionModel().getSelectedItem();
@@ -228,12 +316,20 @@ public class EvenementController {
         if (res.isPresent() && res.get() == ButtonType.OK) {
             try {
                 dao.supprimer(selected.getId());   // suppression en base
-                eventsData.remove(selected);       // suppression dans la liste
+
+                // Si la page actuelle n’a plus qu’un élément (celui qu’on supprime)
+                // et qu’on n’est pas en page 1, on recule d’une page
+                if (eventsData.size() == 1 && page > 1) {
+                    page--;
+                }
+
+                chargerPage(); // on recharge la page depuis la base
             } catch (Exception e) {
                 e.printStackTrace();
                 montrerAlerte("Erreur lors de la suppression de l'évènement.");
             }
         }
+
     }
 
     // === Utilitaires ===

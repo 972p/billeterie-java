@@ -21,6 +21,7 @@
             <TextField fx:id="event_field" promptText="Rechercher un évènement" prefWidth="250"/>
             <Button fx:id="create_event" text="Créer Évènement"/>
             <Button fx:id="show_event" text="Consulter Évènement"/>
+            <Button fx:id="edit_event" text="Modifier Évènement"/>
             <Button fx:id="delete_event" text="Supprimer Évènement"/>
         </HBox>
 
@@ -37,9 +38,9 @@
 
         <!-- Pagination manuelle -->
         <HBox spacing="10" alignment="CENTER">
-            <Button fx:id="prevPage" text="Page précédente"/>
+            <Button fx:id="prevPage" text="Page précédente" onAction="#prevPage"/>
             <Label fx:id="labelPage" text="Page 1"/>
-            <Button fx:id="nextPage" text="Page suivante"/>
+            <Button fx:id="nextPage" text="Page suivante" onAction="#nextPage"/>
         </HBox>
     </children>
 </VBox>

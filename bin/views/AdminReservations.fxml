@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminReservationsController" spacing="20" alignment="CENTER" style="-fx-padding: 30;">
+    
+    <Label text="Gestion des Réservations" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+    
+    <TableView fx:id="reservations_table" VBox.vgrow="ALWAYS" style="-fx-min-width: 800; -fx-min-height: 400;">
+        <columns>
+            <TableColumn fx:id="colEvent" text="Évènement" prefWidth="200" />
+            <TableColumn fx:id="colDateHeure" text="Date &amp; Heure" prefWidth="150" />
+            <TableColumn fx:id="colClient" text="Client" prefWidth="200" />
+            <TableColumn fx:id="colPlace" text="Place" prefWidth="100" />
+            <TableColumn fx:id="colDateAchat" text="Date d'Achat" prefWidth="150" />
+            <TableColumn fx:id="colAction" text="Actions" prefWidth="150" />
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="btnRetour" text="Retour au Dashboard" styleClass="button-secondary" />
+    </HBox>
+
+</VBox>

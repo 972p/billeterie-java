@@ -1,22 +1,42 @@
 package models;
+
 public class Lieu {
-    public String nom;
-    public String adresse;
-    public String ville;
-    public int capacite;
+    private int id_lieu;
+    private String nom;
+    private String adresse;
+    private String ville;
+    private int capacite;
 
-
-
-    public Lieu(String nom, String adresse, String ville, int capacite) {
+    public Lieu(int id_lieu, String nom, String adresse, String ville, int capacite) {
+        this.id_lieu = id_lieu;
         this.nom = nom;
         this.adresse = adresse;
         this.ville = ville;
         this.capacite = capacite;
     }
 
+    public int getId_lieu() {
+        return id_lieu;
+    }
 
-    public String getNom() {return nom;}
-    public String getAdresse() {return adresse;}
-    public String getVille() {return ville;}
-    public int getCapacite() {return capacite;}
+    public String getNom() {
+        return nom;
+    }
+
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public String getVille() {
+        return ville;
+    }
+
+    public int getCapacite() {
+        return capacite;
+    }
+
+    @Override
+    public String toString() {
+        return this.nom + " (" + this.ville + ")";
+    }
 }

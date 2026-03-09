@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.billet.BilletListController"
+            prefWidth="700" prefHeight="450">
+
+    <children>
+
+        <TableView fx:id="table" layoutX="30" layoutY="60" prefWidth="640" prefHeight="330">
+
+            <columns>
+                <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+                <TableColumn fx:id="colClient" text="Client" prefWidth="150"/>
+                <TableColumn fx:id="colEvent" text="Évènement" prefWidth="200"/>
+                <TableColumn fx:id="colDate" text="Date" prefWidth="150"/>
+                <TableColumn fx:id="colPrix" text="Prix (€)" prefWidth="90"/>
+            </columns>
+
+        </TableView>
+
+        <Label text="Liste des Billets" layoutX="260" layoutY="15" style="-fx-font-size: 24px;"/>
+
+    </children>
+
+</AnchorPane>

@@ -6,6 +6,21 @@
     "configurations": [
         {
             "type": "java",
+            "name": "SetupDatabase",
+            "request": "launch",
+            "mainClass": "database.SetupDatabase",
+            "projectName": "billeterie-java_afec63c9"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "App",
+            "projectName": "billeterie-java_afec63c9",
+            "vmArgs": "--module-path /Users/favelas/JavaFX/javafx-sdk-21.0.9/lib/ --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "Main",
@@ -16,7 +31,8 @@
             "name": "App",
             "request": "launch",
             "mainClass": "App",
-            "projectName": "billeterie-main_112703f2"
+            "projectName": "billeterie-main_112703f2",
+            "vmArgs": "--module-path /Users/favelas/JavaFX/javafx-sdk-21.0.9/lib/ --add-modules javafx.controls,javafx.fxml"
         },
         {
             "type": "java",
@@ -38,10 +54,7 @@
             "request": "launch",
             "mainClass": "App",
             "projectName": "projet_base_aad64552",
-            "vmArgs": "--module-path Users/favelas/JavaFX/javafx-sdk-21.0.9/lib/ --add-modules javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path /Users/favelas/JavaFX/javafx-sdk-21.0.9/lib/ --add-modules javafx.controls,javafx.fxml"
         }
     ]
 }
-
-
-

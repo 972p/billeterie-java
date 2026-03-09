@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginController" style="-fx-background-color: #f4f4f4; -fx-padding: 40;">
+   <children>
+      <Label text="Connexion">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <VBox spacing="5.0" maxWidth="300">
+         <children>
+            <Label text="Email :" />
+            <TextField fx:id="txtEmail" promptText="votre@email.com" />
+         </children>
+      </VBox>
+      <VBox spacing="5.0" maxWidth="300">
+         <children>
+            <Label text="Mot de passe :" />
+            <PasswordField fx:id="txtPassword" promptText="*****" />
+         </children>
+      </VBox>
+      <Button mnemonicParsing="false" onAction="#onLoginClick" text="Se connecter" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;" />
+      <Button mnemonicParsing="false" onAction="#onSignupClick" text="Créer un compte" style="-fx-background-color: transparent; -fx-text-fill: #28a745; -fx-underline: true;" />
+   </children>
+</VBox>

@@ -1,4 +1,5 @@
 package DAO;
+
 import java.sql.*;
 
 import database.DatabaseConfig;
@@ -34,5 +35,22 @@ public class LieuDAO {
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, id);
         ps.executeUpdate();
+    }
+
+    public java.util.List<Lieu> trouverTous() throws SQLException {
+        java.util.List<Lieu> liste = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM Lieu";
+        Connection conn = MySQLConnection.connect();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            liste.add(new Lieu(
+                    rs.getInt("id_lieu"),
+                    rs.getString("nom"),
+                    rs.getString("adresse"),
+                    rs.getString("ville"),
+                    rs.getInt("capacite")));
+        }
+        return liste;
     }
 }
