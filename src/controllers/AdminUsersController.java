@@ -33,8 +33,6 @@ public class AdminUsersController {
     @FXML
     private TableColumn<Client, Void> colAction;
 
-    @FXML
-    private Button btnRetour;
 
     private ClientDAO clientDAO = new ClientDAO();
 
@@ -47,8 +45,6 @@ public class AdminUsersController {
         setupActionColumn();
 
         chargerUtilisateurs();
-
-        btnRetour.setOnAction(e -> retourDashboard());
     }
 
     private void chargerUtilisateurs() {
@@ -61,6 +57,7 @@ public class AdminUsersController {
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
             alert.setContentText("Impossible de charger les utilisateurs.");
             alert.show();
         }
@@ -108,6 +105,7 @@ public class AdminUsersController {
 
     private void supprimerUtilisateur(Client client) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
         alert.setTitle("Confirmation de suppression");
         alert.setHeaderText("Supprimer l'utilisateur : " + client.getEmail());
         alert.setContentText("Êtes-vous sûr de vouloir supprimer ce compte ? Cette action est irréversible.");
@@ -120,6 +118,7 @@ public class AdminUsersController {
                 } catch (Exception e) {
                     e.printStackTrace();
                     Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+        errorAlert.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
                     errorAlert.setContentText("Erreur lors de la suppression de l'utilisateur.");
                     errorAlert.show();
                 }
@@ -127,20 +126,4 @@ public class AdminUsersController {
         });
     }
 
-    private void retourDashboard() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/views/evenement/Evenement.fxml"));
-            Stage stage = (Stage) btnRetour.getScene().getWindow();
-            stage.setTitle("Évènements");
-
-            Scene scene = new Scene(root);
-            String css = this.getClass().getResource("/views/style.css").toExternalForm();
-            scene.getStylesheets().add(css);
-
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -49,8 +49,8 @@ public class EvenementDAO {
 
     public void ajouter(Evenement obj) throws SQLException {
         String sql = "INSERT INTO Evenement " +
-                "(titre, description_courte, description_longue, duree, langue, age_min) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+                "(titre, description_courte, description_longue, duree, langue, age_min, categorie) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         Connection conn = MySQLConnection.connect();
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, obj.getTitre());
@@ -59,6 +59,7 @@ public class EvenementDAO {
         ps.setInt(4, obj.getDuree());
         ps.setString(5, obj.getLangue());
         ps.setInt(6, obj.getAgeMin());
+        ps.setString(7, obj.getCategorie());
         ps.executeUpdate();
         ps.close();
         conn.close();
@@ -67,7 +68,7 @@ public class EvenementDAO {
     public void modifier(Evenement obj) throws SQLException {
         String sql = "UPDATE Evenement SET " +
                 "titre=?, description_courte=?, description_longue=?, " +
-                "duree=?, langue=?, age_min=? " +
+                "duree=?, langue=?, age_min=?, categorie=? " +
                 "WHERE id_evenement=?";
         Connection conn = MySQLConnection.connect();
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -77,7 +78,8 @@ public class EvenementDAO {
         ps.setInt(4, obj.getDuree());
         ps.setString(5, obj.getLangue());
         ps.setInt(6, obj.getAgeMin());
-        ps.setInt(7, obj.getId());
+        ps.setString(7, obj.getCategorie());
+        ps.setInt(8, obj.getId());
         ps.executeUpdate();
         ps.close();
         conn.close();
@@ -94,6 +96,12 @@ public class EvenementDAO {
     }
 
     private Evenement mapRow(ResultSet rs) throws SQLException {
+        String cat = null;
+        try {
+            cat = rs.getString("categorie");
+        } catch (SQLException e) {
+            // ignore if column doesn't exist yet
+        }
         return new Evenement(
                 rs.getInt("id_evenement"),
                 rs.getString("titre"),
@@ -101,7 +109,8 @@ public class EvenementDAO {
                 rs.getString("description_longue"),
                 rs.getInt("duree"),
                 rs.getString("langue"),
-                rs.getInt("age_min")
+                rs.getInt("age_min"),
+                cat != null ? cat : "Autre"
         );
     }
 }

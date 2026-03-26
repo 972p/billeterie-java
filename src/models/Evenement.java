@@ -9,6 +9,7 @@ public class Evenement {
     private final int duree;
     private final String langue;
     private final int age_min;
+    private final String categorie;
 
     public Evenement(int id,
                      String titre,
@@ -16,7 +17,8 @@ public class Evenement {
                      String description_longue,
                      int duree,
                      String langue,
-                     int age_min) {
+                     int age_min,
+                     String categorie) {
         this.id = id;
         this.titre = titre;
         this.description_courte = description_courte;
@@ -24,6 +26,7 @@ public class Evenement {
         this.duree = duree;
         this.langue = langue;
         this.age_min = age_min;
+        this.categorie = categorie;
     }
 
     public int getId() {
@@ -52,5 +55,9 @@ public class Evenement {
 
     public int getAgeMin() {
         return age_min;
+    }
+
+    public String getCategorie() {
+        return categorie;
     }
 }

@@ -82,6 +82,14 @@ public class SetupDatabase {
                     System.out.println("⚠️ La colonne 'id_place' existe peut-être déjà dans Billet.");
                 }
 
+                // 6.5. Ajouter colonne categorie à Evenement
+                try {
+                    stmt.executeUpdate("ALTER TABLE Evenement ADD COLUMN categorie VARCHAR(50) DEFAULT 'Autre'");
+                    System.out.println("✅ Colonne 'categorie' ajoutée à Evenement.");
+                } catch (Exception e) {
+                    System.out.println("⚠️ La colonne 'categorie' existe peut-être déjà dans Evenement.");
+                }
+
                 // 7. Générer des Lieux, Salles et Places avec différentes configurations
                 try {
                     java.sql.ResultSet check = stmt

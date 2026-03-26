@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.evenement.CheckoutController">
+    <top>
+        <HBox alignment="CENTER" prefHeight="60.0" style="-fx-padding: 10;">
+            <Label text="Paiement &amp; Tarification" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 24;"/>
+        </HBox>
+    </top>
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-padding: 20;">
+            <VBox spacing="10">
+                <Label text="Détails de vos places :" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
+                <ScrollPane fitToWidth="true" prefHeight="150" style="-fx-background-color: transparent;">
+                    <VBox fx:id="vboxPlaces" spacing="5" style="-fx-padding: 10;"/>
+                </ScrollPane>
+            </VBox>
+
+            <HBox alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
+                <Label text="Total à payer : " style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+                <Label fx:id="lblTotal" text="0.00 €" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #bb86fc;"/>
+            </HBox>
+
+            <Separator />
+
+            <VBox spacing="10" alignment="CENTER" maxWidth="400">
+                <Label text="Informations de Paiement" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
+                <TextField fx:id="txtCardNumber" promptText="Numéro de carte (ex: 4970 1000 0000 0000)" />
+                <HBox spacing="10">
+                    <TextField fx:id="txtExpiration" promptText="MM/YY" HBox.hgrow="ALWAYS" />
+                    <TextField fx:id="txtCvv" promptText="CVV" HBox.hgrow="ALWAYS" />
+                </HBox>
+                <Label text="Paiement 100% Factice &amp; Sécurisé" textFill="#888888" style="-fx-font-size: 10px;"/>
+            </VBox>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" spacing="20.0" style="-fx-padding: 20;">
+            <Button text="Annuler le paiement" onAction="#handleCancel" styleClass="button-secondary" />
+            <Button text="Valider &amp; Payer" onAction="#handlePay" styleClass="button-success" />
+        </HBox>
+    </bottom>
+</BorderPane>

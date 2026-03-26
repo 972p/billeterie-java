@@ -32,10 +32,14 @@ public class EvenementController {
     private TableColumn<Evenement, String> colTemps;
     @FXML
     private TableColumn<Evenement, String> colDescriptionCourte;
+    @FXML
+    private TableColumn<Evenement, String> colCategorie;
 
     // Recherche
     @FXML
     private TextField event_field;
+    @FXML
+    private ComboBox<String> cbFilterCategorie;
 
     // Pagination
     @FXML
@@ -61,7 +65,11 @@ public class EvenementController {
     @FXML
     private Button manage_reservations;
     @FXML
+    private Button btn_espace_client;
+    @FXML
     private Button btn_logout;
+    @FXML
+    private javafx.scene.layout.HBox topBar;
 
     // DAO
     private final EvenementDAO dao = new EvenementDAO();
@@ -82,12 +90,16 @@ public class EvenementController {
 
         colDescriptionCourte
                 .setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getDescriptionCourte()));
+        colCategorie.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getCategorie()));
 
         // Charger la 1ère page
         chargerPage();
 
         // Recherche dynamique
-        event_field.textProperty().addListener((obs, oldValue, newValue) -> filtrerListe(newValue));
+        cbFilterCategorie.setItems(FXCollections.observableArrayList("Toutes", "Concert", "Théâtre", "Sport", "Festival", "Cinéma", "Autre"));
+        cbFilterCategorie.setValue("Toutes");
+        event_field.textProperty().addListener((obs, oldValue, newValue) -> filtrerListe(newValue, cbFilterCategorie.getValue()));
+        cbFilterCategorie.valueProperty().addListener((obs, oldVal, newVal) -> filtrerListe(event_field.getText(), newVal));
 
         // Boutons
         reserve_event.setOnAction(e -> ouvrirFenetreReservation());
@@ -106,6 +118,16 @@ public class EvenementController {
 
             manage_reservations.setVisible(true);
             manage_reservations.setOnAction(e -> ouvrirGestionReservations());
+
+            if (btn_espace_client != null) {
+                btn_espace_client.setVisible(false);
+                btn_espace_client.setManaged(false);
+            }
+            // Hide the topBar (logout button inside Evenement.fxml) when inside AdminDashboard
+            if (topBar != null && controllers.AdminController.getInstance() != null) {
+                topBar.setVisible(false);
+                topBar.setManaged(false);
+            }
         } else {
             create_event.setVisible(false);
             edit_event.setVisible(false);
@@ -113,6 +135,16 @@ public class EvenementController {
 
             manage_users.setVisible(false);
             manage_reservations.setVisible(false);
+            
+            if (btn_espace_client != null) {
+                btn_espace_client.setVisible(true);
+                btn_espace_client.setManaged(true);
+                btn_espace_client.setOnAction(e -> ouvrirEspaceClient());
+            }
+            if (topBar != null) {
+                topBar.setVisible(false);
+                topBar.setManaged(false);
+            }
         }
     }
 
@@ -137,12 +169,12 @@ public class EvenementController {
         }
     }
 
-    // === Navigation Admin ===
-    private void ouvrirGestionUtilisateurs() {
+    @FXML
+    private void ouvrirEspaceClient() {
         try {
-            javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/AdminUsers.fxml"));
-            javafx.stage.Stage stage = (javafx.stage.Stage) manage_users.getScene().getWindow();
-            stage.setTitle("Gestion des Utilisateurs");
+            javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/ClientDashboard.fxml"));
+            javafx.stage.Stage stage = (javafx.stage.Stage) btn_espace_client.getScene().getWindow();
+            stage.setTitle("Espace Client");
 
             javafx.scene.Scene scene = new javafx.scene.Scene(root);
             String css = this.getClass().getResource("/views/style.css").toExternalForm();
@@ -152,26 +184,38 @@ public class EvenementController {
             stage.show();
         } catch (java.io.IOException e) {
             e.printStackTrace();
-            montrerAlerte("Impossible d'ouvrir la gestion des utilisateurs.");
+            montrerAlerte("Impossible de charger la page de connexion.");
+        }
+    }
+
+    // === Navigation Admin ===
+    private void ouvrirGestionUtilisateurs() {
+        if (controllers.AdminController.getInstance() != null) {
+            controllers.AdminController.getInstance().loadCenterView("/views/AdminUsers.fxml");
+        } else {
+            try {
+                javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/AdminUsers.fxml"));
+                javafx.stage.Stage stage = (javafx.stage.Stage) manage_users.getScene().getWindow();
+                stage.setTitle("Gestion des Utilisateurs");
+                javafx.scene.Scene scene = new javafx.scene.Scene(root);
+                scene.getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
+                stage.setScene(scene); stage.show();
+            } catch (java.io.IOException e) { e.printStackTrace(); }
         }
     }
 
     private void ouvrirGestionReservations() {
-        try {
-            javafx.scene.Parent root = javafx.fxml.FXMLLoader
-                    .load(getClass().getResource("/views/AdminReservations.fxml"));
-            javafx.stage.Stage stage = (javafx.stage.Stage) manage_reservations.getScene().getWindow();
-            stage.setTitle("Gestion des Réservations");
-
-            javafx.scene.Scene scene = new javafx.scene.Scene(root);
-            String css = this.getClass().getResource("/views/style.css").toExternalForm();
-            scene.getStylesheets().add(css);
-
-            stage.setScene(scene);
-            stage.show();
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-            montrerAlerte("Impossible d'ouvrir la gestion des réservations.");
+        if (controllers.AdminController.getInstance() != null) {
+            controllers.AdminController.getInstance().loadCenterView("/views/AdminReservations.fxml");
+        } else {
+            try {
+                javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/AdminReservations.fxml"));
+                javafx.stage.Stage stage = (javafx.stage.Stage) manage_reservations.getScene().getWindow();
+                stage.setTitle("Gestion des Réservations");
+                javafx.scene.Scene scene = new javafx.scene.Scene(root);
+                scene.getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
+                stage.setScene(scene); stage.show();
+            } catch (java.io.IOException e) { e.printStackTrace(); }
         }
     }
 
@@ -207,22 +251,22 @@ public class EvenementController {
     }
 
     // === Recherche ===
-    private void filtrerListe(String filtre) {
-        if (filtre == null || filtre.isEmpty()) {
-            event_table.setItems(eventsData);
-            return;
-        }
+    private void filtrerListe(String filtreText, String filtreCat) {
+        String lower = filtreText == null ? "" : filtreText.toLowerCase();
+        boolean filterByCategory = filtreCat != null && !filtreCat.equals("Toutes");
 
-        String lower = filtre.toLowerCase();
-        ObservableList<Evenement> filtered = eventsData.filtered(
-                e -> e.getTitre() != null &&
-                        e.getTitre().toLowerCase().contains(lower));
+        ObservableList<Evenement> filtered = eventsData.filtered(e -> {
+            boolean matchesName = e.getTitre() != null && e.getTitre().toLowerCase().contains(lower);
+            boolean matchesCat = !filterByCategory || (e.getCategorie() != null && e.getCategorie().equals(filtreCat));
+            return matchesName && matchesCat;
+        });
         event_table.setItems(filtered);
     }
 
     // === Création ===
     private void ouvrirFenetreCreation() {
         Dialog<Evenement> dialog = new Dialog<>();
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
         dialog.setTitle("Créer un évènement");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -232,6 +276,8 @@ public class EvenementController {
         TextField dureeField = new TextField();
         TextField langueField = new TextField();
         TextField ageMinField = new TextField();
+        ComboBox<String> cbCategorie = new ComboBox<>(FXCollections.observableArrayList("Concert", "Théâtre", "Sport", "Festival", "Cinéma", "Autre"));
+        cbCategorie.setValue("Autre");
 
         ComboBox<Lieu> cbLieu = new ComboBox<>();
         ComboBox<Salle> cbSalle = new ComboBox<>();
@@ -296,9 +342,10 @@ public class EvenementController {
         grid.addRow(3, new Label("Durée (min):"), dureeField);
         grid.addRow(4, new Label("Langue:"), langueField);
         grid.addRow(5, new Label("Âge minimum:"), ageMinField);
-        grid.addRow(6, new Label("Lieu:"), cbLieu);
-        grid.addRow(7, new Label("Salle:"), cbSalle);
-        grid.addRow(8, new Label("Date & Heure:"), dateHeureField);
+        grid.addRow(6, new Label("Catégorie:"), cbCategorie);
+        grid.addRow(7, new Label("Lieu:"), cbLieu);
+        grid.addRow(8, new Label("Salle:"), cbSalle);
+        grid.addRow(9, new Label("Date & Heure:"), dateHeureField);
 
         dialog.getDialogPane().setContent(grid);
 
@@ -323,7 +370,8 @@ public class EvenementController {
                             descLongueField.getText(),
                             duree,
                             langueField.getText(),
-                            ageMin);
+                            ageMin,
+                            cbCategorie.getValue());
 
                     // Attach extra selections so we can process them after returning
                     return newEv;
@@ -414,6 +462,7 @@ public class EvenementController {
         }
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
         alert.setTitle("Détail de l'évènement");
         alert.setHeaderText(selected.getTitre());
         alert.setContentText(details);
@@ -429,6 +478,7 @@ public class EvenementController {
         }
 
         Dialog<Evenement> dialog = new Dialog<>();
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
         dialog.setTitle("Modifier un évènement");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -438,6 +488,8 @@ public class EvenementController {
         TextField dureeField = new TextField(String.valueOf(selected.getDuree()));
         TextField langueField = new TextField(selected.getLangue());
         TextField ageMinField = new TextField(String.valueOf(selected.getAgeMin()));
+        ComboBox<String> cbCategorie = new ComboBox<>(FXCollections.observableArrayList("Concert", "Théâtre", "Sport", "Festival", "Cinéma", "Autre"));
+        cbCategorie.setValue(selected.getCategorie() != null ? selected.getCategorie() : "Autre");
 
         ComboBox<Lieu> cbLieu = new ComboBox<>();
         ComboBox<Salle> cbSalle = new ComboBox<>();
@@ -558,9 +610,10 @@ public class EvenementController {
         grid.addRow(3, new Label("Durée (min):"), dureeField);
         grid.addRow(4, new Label("Langue:"), langueField);
         grid.addRow(5, new Label("Âge minimum:"), ageMinField);
-        grid.addRow(6, new Label("Lieu:"), cbLieu);
-        grid.addRow(7, new Label("Salle:"), cbSalle);
-        grid.addRow(8, new Label("Date & Heure:"), dateHeureField);
+        grid.addRow(6, new Label("Catégorie:"), cbCategorie);
+        grid.addRow(7, new Label("Lieu:"), cbLieu);
+        grid.addRow(8, new Label("Salle:"), cbSalle);
+        grid.addRow(9, new Label("Date & Heure:"), dateHeureField);
 
         dialog.getDialogPane().setContent(grid);
 
@@ -585,7 +638,8 @@ public class EvenementController {
                             descLongueField.getText(),
                             duree,
                             langueField.getText(),
-                            ageMin);
+                            ageMin,
+                            cbCategorie.getValue());
 
                     return editedEv;
                 } catch (NumberFormatException e) {
@@ -669,15 +723,19 @@ public class EvenementController {
             SeatSelectionController controller = loader.getController();
             controller.initData(selected.getId(), idSeance, idSalle);
 
-            javafx.stage.Stage stage = (javafx.stage.Stage) reserve_event.getScene().getWindow();
-            stage.setTitle("Sélection des places");
+            if (!utils.SessionManager.isAdmin() && controllers.ClientController.getInstance() != null) {
+                controllers.ClientController.getInstance().setCenterView(root);
+            } else {
+                javafx.stage.Stage stage = (javafx.stage.Stage) reserve_event.getScene().getWindow();
+                stage.setTitle("Sélection des places");
 
-            javafx.scene.Scene scene = new javafx.scene.Scene(root);
-            String css = this.getClass().getResource("/views/style.css").toExternalForm();
-            scene.getStylesheets().add(css);
+                javafx.scene.Scene scene = new javafx.scene.Scene(root);
+                String css = this.getClass().getResource("/views/style.css").toExternalForm();
+                scene.getStylesheets().add(css);
 
-            stage.setScene(scene);
-            stage.show();
+                stage.setScene(scene);
+                stage.show();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             montrerAlerte("Erreur lors de l'ouverture du plan de réservation.");
@@ -693,6 +751,7 @@ public class EvenementController {
         }
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
         confirm.setTitle("Supprimer");
         confirm.setHeaderText("Supprimer cet évènement ?");
         confirm.setContentText(selected.getTitre());
@@ -720,6 +779,7 @@ public class EvenementController {
     // === Utilitaires ===
     private void montrerAlerte(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.show();

@@ -4,13 +4,9 @@ import java.sql.*;
 public class CheckDB {
     public static void main(String[] args) {
         try (Connection conn = MySQLConnection.connect()) {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM Client ORDER BY id_client DESC LIMIT 5");
+            ResultSet rs = conn.createStatement().executeQuery("DESCRIBE Evenement");
             while (rs.next()) {
-                System.out.println("ID: " + rs.getInt("id_client") +
-                        ", Email: " + rs.getString("email") +
-                        ", Pass: " + rs.getString("mot_de_passe") +
-                        ", Role: " + rs.getString("p_role"));
+                System.out.println(rs.getString("Field") + " - " + rs.getString("Type"));
             }
         } catch (Exception e) {
             e.printStackTrace();

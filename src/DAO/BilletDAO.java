@@ -85,4 +85,41 @@ public class BilletDAO {
         }
         return billets;
     }
+
+    public java.util.Map<String, Double> getChiffreAffairesParEvenement() throws SQLException {
+        java.util.Map<String, Double> stats = new java.util.HashMap<>();
+        String sql = "SELECT e.titre, SUM(t.prix) as total " +
+                     "FROM Billet b " +
+                     "JOIN Tarif t ON b.id_tarif = t.id_tarif " +
+                     "JOIN Seance s ON b.id_seance = s.id_seance " +
+                     "JOIN Evenement e ON s.id_evenement = e.id_evenement " +
+                     "WHERE b.statut = 'VALIDE' " +
+                     "GROUP BY e.id_evenement";
+        try (Connection conn = MySQLConnection.connect();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                stats.put(rs.getString("titre"), rs.getDouble("total"));
+            }
+        }
+        return stats;
+    }
+
+    public java.util.Map<String, Integer> getBilletsVendusParEvenement() throws SQLException {
+        java.util.Map<String, Integer> stats = new java.util.HashMap<>();
+        String sql = "SELECT e.titre, COUNT(b.id_billet) as total " +
+                     "FROM Billet b " +
+                     "JOIN Seance s ON b.id_seance = s.id_seance " +
+                     "JOIN Evenement e ON s.id_evenement = e.id_evenement " +
+                     "WHERE b.statut = 'VALIDE' " +
+                     "GROUP BY e.id_evenement";
+        try (Connection conn = MySQLConnection.connect();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                stats.put(rs.getString("titre"), rs.getInt("total"));
+            }
+        }
+        return stats;
+    }
 }

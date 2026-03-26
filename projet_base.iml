@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/ressource/views" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/controllers/billet" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/controllers/evenement" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -31,6 +32,16 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
   </component>

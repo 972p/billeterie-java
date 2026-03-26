@@ -138,6 +138,7 @@ public class ClientProfileController {
 
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);

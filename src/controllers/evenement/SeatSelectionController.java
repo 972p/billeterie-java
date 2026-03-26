@@ -18,8 +18,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import DAO.BilletDAO;
-import models.Billet;
 import utils.SessionManager;
 
 public class SeatSelectionController {
@@ -96,10 +94,10 @@ public class SeatSelectionController {
 
                 Button btnSeat = new Button();
                 btnSeat.setPrefSize(40, 40);
-                btnSeat.setStyle("-fx-background-color: green; -fx-text-fill: white; -fx-background-radius: 5;");
+                btnSeat.setStyle("-fx-background-color: #2b2b3c; -fx-text-fill: white; -fx-border-color: #bb86fc; -fx-border-radius: 5; -fx-background-radius: 5;");
 
                 if (reservedSeats.contains(seatLinearId)) {
-                    btnSeat.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-background-radius: 5;");
+                    btnSeat.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 5;");
                     btnSeat.setDisable(true);
                 } else {
                     btnSeat.setOnAction(event -> toggleSeatSelection(btnSeat, seatLinearId));
@@ -113,10 +111,10 @@ public class SeatSelectionController {
     private void toggleSeatSelection(Button btnSeat, int seatId) {
         if (selectedSeats.contains(seatId)) {
             selectedSeats.remove(Integer.valueOf(seatId));
-            btnSeat.setStyle("-fx-background-color: green; -fx-text-fill: white; -fx-background-radius: 5;");
+            btnSeat.setStyle("-fx-background-color: #2b2b3c; -fx-text-fill: white; -fx-border-color: #bb86fc; -fx-border-radius: 5; -fx-background-radius: 5;");
         } else {
             selectedSeats.add(seatId);
-            btnSeat.setStyle("-fx-background-color: blue; -fx-text-fill: white; -fx-background-radius: 5;");
+            btnSeat.setStyle("-fx-background-color: #bb86fc; -fx-text-fill: white; -fx-background-radius: 5;");
         }
     }
 
@@ -133,31 +131,6 @@ public class SeatSelectionController {
         }
 
         try {
-            BilletDAO billetDAO = new BilletDAO();
-            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String currentDate = sdf.format(new java.util.Date());
-            int idTarifParDefaut = -1;
-
-            // Check for existing Tarif or create a dummy one to avoid Foreign Key errors
-            try (Connection conn = MySQLConnection.connect();
-                    PreparedStatement ps = conn
-                            .prepareStatement("SELECT id_tarif FROM Tarif WHERE id_evenement = ? LIMIT 1")) {
-                ps.setInt(1, idEvenement);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    idTarifParDefaut = rs.getInt("id_tarif");
-                } else {
-                    PreparedStatement insertTarif = conn.prepareStatement(
-                            "INSERT INTO Tarif (id_evenement, libelle, prix) VALUES (?, 'Standard', 15.0)",
-                            java.sql.Statement.RETURN_GENERATED_KEYS);
-                    insertTarif.setInt(1, idEvenement);
-                    insertTarif.executeUpdate();
-                    ResultSet rsTarif = insertTarif.getGeneratedKeys();
-                    if (rsTarif.next())
-                        idTarifParDefaut = rsTarif.getInt(1);
-                }
-            }
-
             // First check if any selected seats have been taken in the meantime
             try (Connection conn = MySQLConnection.connect();
                     PreparedStatement psCheck = conn.prepareStatement(
@@ -176,35 +149,44 @@ public class SeatSelectionController {
                 }
             }
 
-            for (Integer idPlace : selectedSeats) {
-                Billet newBillet = new Billet(
-                        0,
-                        idSeance,
-                        idTarifParDefaut,
-                        SessionManager.getCurrentUser().getId(),
-                        idPlace,
-                        "VALIDE",
-                        currentDate);
-                billetDAO.ajouter(newBillet);
-            }
+            // Redirect to Checkout
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/evenement/Checkout.fxml"));
+            Parent root = loader.load();
+            CheckoutController controller = loader.getController();
+            controller.initData(idEvenement, idSeance, idSalle, selectedSeats);
 
-            showAlert("Succès ! Vous avez réservé " + selectedSeats.size() + " place(s).");
-            handleReturn(event); // Go back to events list
+            if (!utils.SessionManager.isAdmin() && controllers.ClientController.getInstance() != null) {
+                controllers.ClientController.getInstance().setCenterView(root);
+            } else {
+                Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+                stage.setTitle("Paiement");
+                Scene scene = new Scene(root);
+                String css = this.getClass().getResource("/views/style.css").toExternalForm();
+                scene.getStylesheets().add(css);
+                stage.setScene(scene);
+                stage.show();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Une erreur est survenue lors de la réservation.");
+            showAlert("Une erreur est survenue lors de la redirection vers le paiement.");
         }
     }
-
     @FXML
     public void handleReturn(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/views/evenement/Evenement.fxml"));
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Évènements");
-            stage.setScene(new Scene(root));
-            stage.show();
+            if (!utils.SessionManager.isAdmin() && controllers.ClientController.getInstance() != null) {
+                controllers.ClientController.getInstance().loadCenterView("/views/evenement/Evenement.fxml");
+            } else {
+                Parent root = FXMLLoader.load(getClass().getResource("/views/evenement/Evenement.fxml"));
+                Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+                stage.setTitle("Évènements");
+                Scene scene = new Scene(root);
+                String css = this.getClass().getResource("/views/style.css").toExternalForm();
+                scene.getStylesheets().add(css);
+                stage.setScene(scene);
+                stage.show();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -212,6 +194,7 @@ public class SeatSelectionController {
 
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

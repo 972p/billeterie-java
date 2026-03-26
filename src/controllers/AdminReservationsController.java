@@ -84,8 +84,11 @@ public class AdminReservationsController {
     @FXML
     private TableColumn<ReservationView, Void> colAction;
 
+
     @FXML
-    private Button btnRetour;
+    private javafx.scene.chart.PieChart pieChartVentes;
+    @FXML
+    private javafx.scene.chart.BarChart<String, Number> barChartRevenus;
 
     private BilletDAO billetDAO = new BilletDAO();
 
@@ -100,8 +103,32 @@ public class AdminReservationsController {
         setupActionColumn();
 
         chargerReservations();
+        chargerStatistiques();
+    }
 
-        btnRetour.setOnAction(e -> retourDashboard());
+    private void chargerStatistiques() {
+        try {
+            // Ventes (PieChart)
+            java.util.Map<String, Integer> ventes = billetDAO.getBilletsVendusParEvenement();
+            ObservableList<javafx.scene.chart.PieChart.Data> pieData = FXCollections.observableArrayList();
+            for (java.util.Map.Entry<String, Integer> entry : ventes.entrySet()) {
+                pieData.add(new javafx.scene.chart.PieChart.Data(entry.getKey() + " (" + entry.getValue() + ")", entry.getValue()));
+            }
+            pieChartVentes.setData(pieData);
+
+            // Revenus (BarChart)
+            java.util.Map<String, Double> revenus = billetDAO.getChiffreAffairesParEvenement();
+            javafx.scene.chart.XYChart.Series<String, Number> series = new javafx.scene.chart.XYChart.Series<>();
+            series.setName("Revenus");
+            for (java.util.Map.Entry<String, Double> entry : revenus.entrySet()) {
+                series.getData().add(new javafx.scene.chart.XYChart.Data<>(entry.getKey(), entry.getValue()));
+            }
+            barChartRevenus.getData().clear();
+            barChartRevenus.getData().add(series);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void chargerReservations() {
@@ -135,6 +162,7 @@ public class AdminReservationsController {
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
             alert.setContentText("Impossible de charger les réservations.");
             alert.show();
         }
@@ -175,6 +203,7 @@ public class AdminReservationsController {
 
     private void annulerReservation(ReservationView res) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
         alert.setTitle("Confirmation d'annulation");
         alert.setHeaderText("Annuler la réservation du client : " + res.getClientNom());
         alert.setContentText(
@@ -188,6 +217,7 @@ public class AdminReservationsController {
                 } catch (Exception e) {
                     e.printStackTrace();
                     Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+        errorAlert.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
                     errorAlert.setContentText("Erreur lors de l'annulation de la réservation.");
                     errorAlert.show();
                 }
@@ -195,20 +225,4 @@ public class AdminReservationsController {
         });
     }
 
-    private void retourDashboard() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/views/evenement/Evenement.fxml"));
-            Stage stage = (Stage) btnRetour.getScene().getWindow();
-            stage.setTitle("Évènements");
-
-            Scene scene = new Scene(root);
-            String css = this.getClass().getResource("/views/style.css").toExternalForm();
-            scene.getStylesheets().add(css);
-
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

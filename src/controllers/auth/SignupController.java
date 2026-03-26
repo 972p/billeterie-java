@@ -60,6 +60,9 @@ public class SignupController {
             Client newClient = new Client(0, nom, email, telephone, adresse, password, "USER");
             clientDAO.ajouter(newClient);
 
+            // Send Welcome Email
+            utils.EmailSender.sendWelcomeEmail(email, nom);
+
             // Redirection vers le login après succès
             goToLogin(event);
         } catch (Exception e) {

@@ -5,23 +5,26 @@
 <?import javafx.scene.text.Font?>
 
 <VBox spacing="20.0" alignment="TOP_CENTER" prefHeight="500.0" prefWidth="600.0"
+      style="-fx-background-color: transparent; -fx-padding: 20;"
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="controllers.evenement.EvenementController">
 
     <children>
-        <HBox alignment="CENTER_LEFT" spacing="20">
+        <HBox fx:id="topBar" alignment="CENTER_LEFT" spacing="20">
             <Label text="Évènements" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308">
                 <font>
                     <Font size="33.0"/>
                 </font>
             </Label>
             <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btn_espace_client" text="Espace Client" style="-fx-background-color: #bb86fc; -fx-text-fill: white;" />
             <Button fx:id="btn_logout" text="Déconnexion" onAction="#handleLogout" style="-fx-background-color: #dc3545; -fx-text-fill: white;" />
         </HBox>
 
         <!-- Barre d'actions (recherche + boutons) -->
         <HBox spacing="10" alignment="CENTER">
             <TextField fx:id="event_field" promptText="Rechercher un évènement" prefWidth="250"/>
+            <ComboBox fx:id="cbFilterCategorie" promptText="Toutes les catégories" />
             <Button fx:id="reserve_event" text="Réserver une place (Plan)" />
             <Button fx:id="create_event" text="Créer Évènement"/>
             <Button fx:id="show_event" text="Consulter Évènement"/>
@@ -35,6 +38,7 @@
         <TableView fx:id="event_table" prefHeight="300.0" prefWidth="580.0">
             <columns>
                 <TableColumn fx:id="colTitre" text="Titre" prefWidth="200"/>
+                <TableColumn fx:id="colCategorie" text="Catégorie" prefWidth="120"/>
                 <!-- Temps en minutes -->
                 <TableColumn fx:id="colTemps" text="Temps (min)" prefWidth="180"/>
                 <!-- Description courte -->

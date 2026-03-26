@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import models.Client;
 import utils.SessionManager;
@@ -15,8 +16,21 @@ import java.io.IOException;
 
 public class ClientController {
 
+    private static ClientController instance;
+
+    @FXML
+    private BorderPane mainContainer;
+
     @FXML
     private Label lblWelcome;
+
+    public ClientController() {
+        instance = this;
+    }
+
+    public static ClientController getInstance() {
+        return instance;
+    }
 
     @FXML
     public void initialize() {
@@ -29,47 +43,61 @@ public class ClientController {
     @FXML
     private void handleLogout(ActionEvent event) {
         SessionManager.clearSession();
-        loadView("/views/Login.fxml", "Connexion", event);
+        loadFullView("/views/Login.fxml", "Connexion", event);
     }
 
     @FXML
-    private void handleViewProfile(ActionEvent event) {
-        loadView("/views/ClientProfile.fxml", "Mon Profil", event);
+    private void handleViewProfile() {
+        loadCenterView("/views/ClientProfile.fxml");
     }
 
     @FXML
-    private void handleViewBillets(ActionEvent event) {
-        loadView("/views/billet/ClientBillets.fxml", "Mes Billets", event);
+    private void handleViewBillets() {
+        loadCenterView("/views/billet/ClientBillets.fxml");
     }
 
     @FXML
-    private void handleBookTicket(ActionEvent event) {
-        loadView("/views/evenement/Evenement.fxml", "Réserver un Billet", event);
+    private void handleBookTicket() {
+        loadCenterView("/views/evenement/Evenement.fxml");
     }
 
-    private void loadView(String fxmlPath, String title, ActionEvent event) {
+    public void loadCenterView(String fxmlPath) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+            mainContainer.setCenter(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la vue : " + fxmlPath);
+        }
+    }
+
+    public void setCenterView(Parent view) {
+        if(mainContainer != null) {
+            mainContainer.setCenter(view);
+        }
+    }
+
+    private void loadFullView(String fxmlPath, String title, ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle(title);
-
             Scene scene = new Scene(root);
             String css = this.getClass().getResource("/views/style.css").toExternalForm();
             scene.getStylesheets().add(css);
-
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la page demandée.");
         }
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.showAndWait();
+        alert.show();
     }
 }

@@ -9,12 +9,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" style="-fx-padding: 30; -fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.billet.BilletController">
+<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" style="-fx-padding: 30; -fx-background-color: transparent;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.billet.BilletController">
    <children>
-      <Label text="Mes Billets">
-         <font>
-            <Font name="System Bold" size="28.0" />
-         </font>
+      <Label text="Mes Billets" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 28;">
       </Label>
       <TableView fx:id="tableBillets" prefHeight="450.0" prefWidth="740.0" VBox.vgrow="ALWAYS">
         <columns>
@@ -32,8 +29,7 @@
       </TableView>
       <HBox alignment="CENTER" spacing="20.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#handleRetour" styleClass="button-secondary" text="Retour au Dashboard" />
-            <Button mnemonicParsing="false" onAction="#handleDownloadPdf" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Télécharger PDF" disable="true" />
+            <Button mnemonicParsing="false" onAction="#handleDownloadPdf" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Télécharger PDF" />
          </children>
       </HBox>
    </children>

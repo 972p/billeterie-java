@@ -2,32 +2,30 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginController" style="-fx-background-color: #f4f4f4; -fx-padding: 40;">
+<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginController" style="-fx-background-color: #1e1e2e; -fx-padding: 50;">
    <children>
-      <Label text="Connexion">
-         <font>
-            <Font name="System Bold" size="24.0" />
-         </font>
-      </Label>
+      <Label text="🎟 Billeterie" style="-fx-text-fill: #bb86fc; -fx-font-size: 28; -fx-font-weight: bold;" />
+      <Label text="Connexion" style="-fx-text-fill: white; -fx-font-size: 18;" />
       <VBox spacing="5.0" maxWidth="300">
          <children>
-            <Label text="Email :" />
+            <Label text="Email :" style="-fx-text-fill: #cccccc;" />
             <TextField fx:id="txtEmail" promptText="votre@email.com" />
          </children>
       </VBox>
       <VBox spacing="5.0" maxWidth="300">
          <children>
-            <Label text="Mot de passe :" />
-            <PasswordField fx:id="txtPassword" promptText="*****" />
+            <Label text="Mot de passe :" style="-fx-text-fill: #cccccc;" />
+            <PasswordField fx:id="txtPassword" promptText="••••••••" />
          </children>
       </VBox>
-      <Button mnemonicParsing="false" onAction="#onLoginClick" text="Se connecter" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;" />
-      <Button mnemonicParsing="false" onAction="#onSignupClick" text="Créer un compte" style="-fx-background-color: transparent; -fx-text-fill: #28a745; -fx-underline: true;" />
+      <CheckBox fx:id="chkRemember" text="Rester connecté" style="-fx-text-fill: #cccccc;" />
+      <Button mnemonicParsing="false" onAction="#onLoginClick" text="Se connecter" styleClass="button-primary" prefWidth="300" />
+      <Button mnemonicParsing="false" onAction="#onSignupClick" text="Créer un compte" style="-fx-background-color: transparent; -fx-text-fill: #bb86fc; -fx-underline: true;" />
    </children>
 </VBox>

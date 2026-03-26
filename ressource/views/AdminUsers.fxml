@@ -3,9 +3,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminUsersController" spacing="20" alignment="CENTER" style="-fx-padding: 30;">
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminUsersController" spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: transparent;">
     
-    <Label text="Gestion des Utilisateurs" style="-fx-font-size: 24; -fx-font-weight: bold;"/>
+    <Label text="Gestion des Utilisateurs" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: white;"/>
     
     <TableView fx:id="users_table" VBox.vgrow="ALWAYS" style="-fx-min-width: 600; -fx-min-height: 400;">
         <columns>
@@ -16,9 +16,5 @@
             <TableColumn fx:id="colAction" text="Actions" prefWidth="150" />
         </columns>
     </TableView>
-
-    <HBox spacing="10" alignment="CENTER">
-        <Button fx:id="btnRetour" text="Retour au Dashboard" styleClass="button-secondary" />
-    </HBox>
 
 </VBox>

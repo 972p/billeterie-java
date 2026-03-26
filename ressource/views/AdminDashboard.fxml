@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1100.0" style="-fx-background-color: #1e1e2e;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminController">
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #2b2b3c; -fx-padding: 10 20;" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="🎟 Tableau de Bord Admin" style="-fx-text-fill: #bb86fc; -fx-font-size: 22; -fx-font-weight: bold;"/>
+            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label fx:id="lblAdminName" text="Admin" style="-fx-text-fill: #cccccc; -fx-font-size: 13;"/>
+                  <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold;" text="Déconnexion">
+                     <HBox.margin>
+                        <javafx.geometry.Insets left="15.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </top>
+   <left>
+      <VBox prefWidth="240.0" spacing="12.0" style="-fx-background-color: #2b2b3c; -fx-padding: 25;" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Navigation" style="-fx-text-fill: #bb86fc; -fx-font-weight: bold; -fx-font-size: 13;" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleViewEvenements" styleClass="button-primary" text="📋  Évènements" />
+            <Label text="Administration" style="-fx-text-fill: #bb86fc; -fx-font-weight: bold; -fx-font-size: 13;">
+               <VBox.margin>
+                  <javafx.geometry.Insets top="10.0" />
+               </VBox.margin>
+            </Label>
+            <Button maxWidth="1.7976931348623157E808" mnemonicParsing="false" onAction="#handleViewUsers" styleClass="button-secondary" text="👥  Gestion Utilisateurs" />
+            <Button maxWidth="1.7976931348623157E808" mnemonicParsing="false" onAction="#handleViewReservations" styleClass="button-secondary" text="📊  Gestion Réservations" />
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <VBox alignment="CENTER" spacing="20.0" style="-fx-padding: 40;" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Bienvenue dans l'espace Administrateur" style="-fx-text-fill: white; -fx-font-size: 30; -fx-font-weight: bold;" />
+            <Label text="Gérez les évènements, les utilisateurs et les réservations depuis le menu de gauche." textAlignment="CENTER" style="-fx-text-fill: #cccccc; -fx-font-size: 15;" />
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
