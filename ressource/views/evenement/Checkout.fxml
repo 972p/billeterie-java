@@ -4,44 +4,128 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.evenement.CheckoutController">
-    <top>
-        <HBox alignment="CENTER" prefHeight="60.0" style="-fx-padding: 10;">
-            <Label text="Paiement &amp; Tarification" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 24;"/>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="850.0" spacing="20" styleClass="checkout-container" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.evenement.CheckoutController">
+    <children>
+        <HBox spacing="20" VBox.vgrow="ALWAYS">
+            <children>
+                <!-- Section Gauche : Résumé de la commande -->
+                <VBox prefWidth="350" spacing="20" styleClass="summary-card">
+                    <children>
+                        <Label styleClass="summary-title" text="Résumé de la commande" />
+                        <ImageView fx:id="imgPoster" fitHeight="250.0" fitWidth="200.0" preserveRatio="true">
+                            <VBox.margin>
+                                <Insets left="55" />
+                            </VBox.margin>
+                        </ImageView>
+                        <VBox spacing="5">
+                            <children>
+                                <Label fx:id="lblEventTitle" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: white;" text="Titre de l'événement" wrapText="true" />
+                                <Label fx:id="lblEventDate" styleClass="summary-info" text="Date &amp; Heure" />
+                                <Label fx:id="lblEventLieu" styleClass="summary-info" text="Lieu" />
+                            </children>
+                        </VBox>
+                        <Separator opacity="0.2" />
+                        <VBox spacing="10">
+                            <children>
+                                <Label text="Places sélectionnées :" style="-fx-text-fill: #aaaaaa;" />
+                                <ScrollPane fitToWidth="true" prefHeight="120" style="-fx-background-color: transparent;">
+                                    <VBox fx:id="vboxPlaces" spacing="5" />
+                                </ScrollPane>
+                            </children>
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <children>
+                                <TextField fx:id="txtPromoCode" promptText="Code promo" HBox.hgrow="ALWAYS" />
+                                <Button text="Appliquer" onAction="#handleApplyPromo" styleClass="button-secondary" />
+                            </children>
+                        </HBox>
+                        <HBox fx:id="hboxDiscount" alignment="CENTER_RIGHT" spacing="10" visible="false" managed="false">
+                            <children>
+                                <Label text="Réduction :" style="-fx-font-size: 14; -fx-text-fill: #aaaaaa;" />
+                                <Label fx:id="lblDiscount" style="-fx-font-size: 14; -fx-text-fill: #dc3545;" text="- 0.00 €" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="10">
+                            <children>
+                                <Label text="Total :" style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: white;" />
+                                <Label fx:id="lblTotal" style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #bb86fc;" text="0.00 €" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <!-- Section Droite : Paiement -->
+                <VBox spacing="20" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label styleClass="summary-title" text="Mode de Paiement" />
+                        
+                        <!-- Choix du mode de paiement -->
+                        <HBox spacing="15">
+                            <children>
+                                <VBox fx:id="btnCardPayment" onMouseClicked="#selectCardPayment" spacing="10" styleClass="payment-method-box" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label text="Carte Bancaire" style="-fx-font-weight: bold; -fx-text-fill: white;" />
+                                        <Label text="Visa, Mastercard..." style="-fx-font-size: 11; -fx-text-fill: #888;" />
+                                    </children>
+                                </VBox>
+                                <VBox fx:id="btnBalancePayment" onMouseClicked="#selectBalancePayment" spacing="10" styleClass="payment-method-box" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label text="Solde du Compte" style="-fx-font-weight: bold; -fx-text-fill: white;" />
+                                        <HBox spacing="5">
+                                            <Label text="Disponible :" style="-fx-font-size: 11; -fx-text-fill: #888;" />
+                                            <Label fx:id="lblUserBalance" styleClass="balance-label" text="0.00 €" />
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+
+                        <StackPane VBox.vgrow="ALWAYS">
+                            <children>
+                                <!-- Formulaire Carte -->
+                                <VBox fx:id="paneCard" spacing="15" visible="true">
+                                    <children>
+                                        <Label text="Informations de la carte" style="-fx-text-fill: #888;" />
+                                        <TextField fx:id="txtCardNumber" promptText="Numéro de la carte" />
+                                        <HBox spacing="10">
+                                            <children>
+                                                <TextField fx:id="txtExpiration" promptText="MM/YY" HBox.hgrow="ALWAYS" />
+                                                <TextField fx:id="txtCvv" promptText="CVV" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                        <CheckBox text="Mémoriser cette carte" style="-fx-text-fill: #888;" />
+                                    </children>
+                                </VBox>
+
+                                <!-- Message Solde -->
+                                <VBox fx:id="paneBalance" alignment="CENTER" spacing="15" visible="false">
+                                    <children>
+                                        <Label text="Le montant total sera déduit de votre solde." style="-fx-text-fill: #888; -fx-font-size: 14;" />
+                                        <Label text="Transaction sécurisée et sans frais." style="-fx-text-fill: #888; -fx-font-size: 11;" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </StackPane>
+
+                        <Region VBox.vgrow="ALWAYS" />
+
+                        <HBox alignment="CENTER" spacing="15">
+                            <children>
+                                <Button onAction="#handleCancel" prefHeight="45" prefWidth="180" styleClass="button-secondary" text="Annuler" />
+                                <Button fx:id="btnProcessPay" onAction="#handlePay" prefHeight="45" prefWidth="180" styleClass="button-success" text="Confirmer l'achat" />
+                            </children>
+                        </HBox>
+                    </children>
+                    <padding>
+                        <Insets top="10" />
+                    </padding>
+                </VBox>
+            </children>
         </HBox>
-    </top>
-    <center>
-        <VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-padding: 20;">
-            <VBox spacing="10">
-                <Label text="Détails de vos places :" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
-                <ScrollPane fitToWidth="true" prefHeight="150" style="-fx-background-color: transparent;">
-                    <VBox fx:id="vboxPlaces" spacing="5" style="-fx-padding: 10;"/>
-                </ScrollPane>
-            </VBox>
-
-            <HBox alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
-                <Label text="Total à payer : " style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
-                <Label fx:id="lblTotal" text="0.00 €" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #bb86fc;"/>
-            </HBox>
-
-            <Separator />
-
-            <VBox spacing="10" alignment="CENTER" maxWidth="400">
-                <Label text="Informations de Paiement" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
-                <TextField fx:id="txtCardNumber" promptText="Numéro de carte (ex: 4970 1000 0000 0000)" />
-                <HBox spacing="10">
-                    <TextField fx:id="txtExpiration" promptText="MM/YY" HBox.hgrow="ALWAYS" />
-                    <TextField fx:id="txtCvv" promptText="CVV" HBox.hgrow="ALWAYS" />
-                </HBox>
-                <Label text="Paiement 100% Factice &amp; Sécurisé" textFill="#888888" style="-fx-font-size: 10px;"/>
-            </VBox>
-        </VBox>
-    </center>
-    <bottom>
-        <HBox alignment="CENTER" spacing="20.0" style="-fx-padding: 20;">
-            <Button text="Annuler le paiement" onAction="#handleCancel" styleClass="button-secondary" />
-            <Button text="Valider &amp; Payer" onAction="#handlePay" styleClass="button-success" />
-        </HBox>
-    </bottom>
-</BorderPane>
+    </children>
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+</VBox>

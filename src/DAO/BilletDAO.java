@@ -33,6 +33,7 @@ public class BilletDAO {
         ps.setObject(4, obj.getId_place());
         ps.setObject(5, obj.getStatut());
         ps.setObject(6, obj.getDate_achat());
+        ps.setInt(7, obj.getId_billet());
         ps.executeUpdate();
     }
 
@@ -121,5 +122,51 @@ public class BilletDAO {
             }
         }
         return stats;
+    }
+
+    public void annulerBillet(int idBillet) throws SQLException {
+        Connection conn = null;
+        try {
+            conn = MySQLConnection.connect();
+            conn.setAutoCommit(false);
+
+            // 1. Get ticket details (client and price)
+            String sqlBillet = "SELECT b.id_client, t.prix, b.statut FROM Billet b JOIN Tarif t ON b.id_tarif = t.id_tarif WHERE b.id_billet = ?";
+            PreparedStatement psBillet = conn.prepareStatement(sqlBillet);
+            psBillet.setInt(1, idBillet);
+            ResultSet rs = psBillet.executeQuery();
+
+            if (rs.next()) {
+                String status = rs.getString("statut");
+                if (!"VALIDE".equals(status)) {
+                    throw new SQLException("Seul un billet VALIDE peut être annulé.");
+                }
+
+                int clientId = rs.getInt("id_client");
+                double prix = rs.getDouble("prix");
+
+                // 2. Update ticket status
+                String sqlUpdateBillet = "UPDATE Billet SET statut = 'ANNULE' WHERE id_billet = ?";
+                PreparedStatement psUpdateBillet = conn.prepareStatement(sqlUpdateBillet);
+                psUpdateBillet.setInt(1, idBillet);
+                psUpdateBillet.executeUpdate();
+
+                // 3. Credit client balance
+                String sqlUpdateClient = "UPDATE Client SET solde = solde + ? WHERE id_client = ?";
+                PreparedStatement psUpdateClient = conn.prepareStatement(sqlUpdateClient);
+                psUpdateClient.setDouble(1, prix);
+                psUpdateClient.setInt(2, clientId);
+                psUpdateClient.executeUpdate();
+
+                conn.commit();
+            } else {
+                throw new SQLException("Billet non trouvé.");
+            }
+        } catch (SQLException e) {
+            if (conn != null) conn.rollback();
+            throw e;
+        } finally {
+            if (conn != null) conn.close();
+        }
     }
 }

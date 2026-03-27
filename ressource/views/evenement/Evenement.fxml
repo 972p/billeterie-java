@@ -34,17 +34,12 @@
             <Button fx:id="manage_reservations" text="Gestion Réservations (Admin)"/>
         </HBox>
 
-        <!-- TableView des évènements -->
-        <TableView fx:id="event_table" prefHeight="300.0" prefWidth="580.0">
-            <columns>
-                <TableColumn fx:id="colTitre" text="Titre" prefWidth="200"/>
-                <TableColumn fx:id="colCategorie" text="Catégorie" prefWidth="120"/>
-                <!-- Temps en minutes -->
-                <TableColumn fx:id="colTemps" text="Temps (min)" prefWidth="180"/>
-                <!-- Description courte -->
-                <TableColumn fx:id="colDescriptionCourte" text="Description courte" prefWidth="200"/>
-            </columns>
-        </TableView>
+        <!-- Vue sous forme de cartes -->
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+           <content>
+              <FlowPane fx:id="event_container" alignment="TOP_CENTER" hgap="30.0" prefWrapLength="900.0" rowValignment="TOP" styleClass="event-container" vgap="30.0" />
+           </content>
+        </ScrollPane>
 
         <!-- Pagination manuelle -->
         <HBox spacing="10" alignment="CENTER">

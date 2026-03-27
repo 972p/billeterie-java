@@ -170,3 +170,128 @@
 .dialog-pane>*.button-bar>*.container {
     -fx-padding: 20px 0 0 0;
 }
+
+/* Event Cards */
+.event-container {
+    -fx-padding: 20;
+    -fx-hgap: 20;
+    -fx-vgap: 20;
+}
+
+.event-card {
+    -fx-background-color: #1e1e2e;
+    -fx-background-radius: 12;
+    -fx-border-color: #333344;
+    -fx-border-radius: 12;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+.event-card:hover {
+    -fx-translate-y: -5;
+    -fx-effect: dropshadow(three-pass-box, rgba(187,134,252,0.3), 15, 0, 0, 8);
+    -fx-border-color: #bb86fc;
+}
+
+.event-card-info {
+    -fx-padding: 15;
+    -fx-spacing: 5;
+}
+
+.event-card-title {
+    -fx-text-fill: white;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
+
+.event-card-category {
+    -fx-text-fill: #bb86fc;
+    -fx-font-size: 11;
+    -fx-font-weight: bold;
+    -fx-text-transform: uppercase;
+}
+
+.event-card-description {
+    -fx-text-fill: #aaaaaa;
+    -fx-font-size: 13;
+}
+
+.event-card-poster {
+    -fx-background-radius: 12 12 0 0;
+    -fx-border-radius: 12 12 0 0;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #333344;
+    -fx-background-radius: 5;
+}
+
+/* Checkout & Summary */
+.checkout-container {
+    -fx-background-color: #121212;
+}
+
+.summary-card {
+    -fx-background-color: #1e1e2e;
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+    -fx-spacing: 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 15, 0, 0, 5);
+}
+
+.summary-title {
+    -fx-text-fill: white;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+}
+
+.summary-info {
+    -fx-text-fill: #bb86fc;
+    -fx-font-size: 14;
+}
+
+.payment-method-box {
+    -fx-background-color: #1e1e2e;
+    -fx-background-radius: 10;
+    -fx-padding: 15;
+    -fx-border-color: #333344;
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+}
+
+.payment-method-box:hover {
+    -fx-border-color: #bb86fc;
+}
+
+.payment-method-selected {
+    -fx-border-color: #bb86fc;
+    -fx-border-width: 2;
+    -fx-background-color: rgba(187, 134, 252, 0.1);
+}
+
+.balance-label {
+    -fx-text-fill: #00e676;
+    -fx-font-weight: bold;
+}
+
+.order-item {
+    -fx-padding: 10;
+    -fx-background-color: #252535;
+    -fx-background-radius: 8;
+}

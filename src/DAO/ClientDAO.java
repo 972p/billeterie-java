@@ -8,7 +8,7 @@ import models.Client;
 
 public class ClientDAO {
     public void ajouter(Client obj) throws SQLException {
-        String sql = "INSERT INTO Client (nom, email, telephone, adresse, mot_de_passe, p_role, photo_profil) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Client (nom, email, telephone, adresse, mot_de_passe, p_role, photo_profil, solde) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         Connection conn = MySQLConnection.connect();
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, obj.getNom());
@@ -22,11 +22,12 @@ public class ClientDAO {
 
         ps.setString(6, obj.getRole());
         ps.setString(7, obj.getPhotoProfil());
+        ps.setDouble(8, obj.getSolde());
         ps.executeUpdate();
     }
 
     public void modifier(Client obj) throws SQLException {
-        String sql = "UPDATE Client SET nom=?, email=?, telephone=?, adresse=?, mot_de_passe=?, p_role=?, photo_profil=? WHERE id_client=?";
+        String sql = "UPDATE Client SET nom=?, email=?, telephone=?, adresse=?, mot_de_passe=?, p_role=?, photo_profil=?, solde=? WHERE id_client=?";
         Connection conn = MySQLConnection.connect();
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, obj.getNom());
@@ -36,7 +37,8 @@ public class ClientDAO {
         ps.setString(5, obj.getMotDePasse());
         ps.setString(6, obj.getRole());
         ps.setString(7, obj.getPhotoProfil());
-        ps.setInt(8, obj.getId());
+        ps.setDouble(8, obj.getSolde());
+        ps.setInt(9, obj.getId());
         ps.executeUpdate();
     }
 
@@ -78,9 +80,10 @@ public class ClientDAO {
                         rs.getString("email"),
                         rs.getString("telephone"),
                         rs.getString("adresse"),
-                        hashedDbPassword,
+                        rs.getString(5), // hashedDbPassword
                         rs.getString("p_role"),
-                        rs.getString("photo_profil"));
+                        rs.getString("photo_profil"),
+                        rs.getDouble("solde"));
             }
         }
         return null;
@@ -107,11 +110,21 @@ public class ClientDAO {
                             rs.getString("adresse"),
                             rs.getString("mot_de_passe"),
                             rs.getString("p_role"),
-                            rs.getString("photo_profil"));
+                            rs.getString("photo_profil"),
+                            rs.getDouble("solde"));
                     clients.add(client);
                 }
             }
         }
         return clients;
+    }
+    public void updateSolde(int id, double nouveauSolde) throws SQLException {
+        String sql = "UPDATE Client SET solde = ? WHERE id_client = ?";
+        try (Connection conn = MySQLConnection.connect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, nouveauSolde);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        }
     }
 }

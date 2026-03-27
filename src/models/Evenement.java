@@ -10,6 +10,31 @@ public class Evenement {
     private final String langue;
     private final int age_min;
     private final String categorie;
+    private String affiche;
+
+    public void setAffiche(String affiche) {
+        this.affiche = affiche;
+    }
+
+    public Evenement(int id,
+                     String titre,
+                     String description_courte,
+                     String description_longue,
+                     int duree,
+                     String langue,
+                     int age_min,
+                     String categorie,
+                     String affiche) {
+        this.id = id;
+        this.titre = titre;
+        this.description_courte = description_courte;
+        this.description_longue = description_longue;
+        this.duree = duree;
+        this.langue = langue;
+        this.age_min = age_min;
+        this.categorie = categorie;
+        this.affiche = affiche;
+    }
 
     public Evenement(int id,
                      String titre,
@@ -19,14 +44,7 @@ public class Evenement {
                      String langue,
                      int age_min,
                      String categorie) {
-        this.id = id;
-        this.titre = titre;
-        this.description_courte = description_courte;
-        this.description_longue = description_longue;
-        this.duree = duree;
-        this.langue = langue;
-        this.age_min = age_min;
-        this.categorie = categorie;
+        this(id, titre, description_courte, description_longue, duree, langue, age_min, categorie, null);
     }
 
     public int getId() {
@@ -59,5 +77,9 @@ public class Evenement {
 
     public String getCategorie() {
         return categorie;
+    }
+
+    public String getAffiche() {
+        return affiche;
     }
 }

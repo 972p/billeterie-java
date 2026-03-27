@@ -2,13 +2,15 @@ package controllers.evenement;
 
 import DAO.EvenementDAO;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
+import javafx.scene.image.*;
 import javafx.geometry.Insets;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import models.Evenement;
 import models.Lieu;
 import models.Salle;
@@ -17,23 +19,22 @@ import DAO.LieuDAO;
 import DAO.SalleDAO;
 import DAO.SeanceDAO;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class EvenementController {
 
     // TableView + colonnes
     @FXML
-    private TableView<Evenement> event_table;
-    @FXML
-    private TableColumn<Evenement, String> colTitre;
-    @FXML
-    private TableColumn<Evenement, String> colTemps;
-    @FXML
-    private TableColumn<Evenement, String> colDescriptionCourte;
-    @FXML
-    private TableColumn<Evenement, String> colCategorie;
+    private javafx.scene.layout.FlowPane event_container;
 
     // Recherche
     @FXML
@@ -83,15 +84,6 @@ public class EvenementController {
 
     @FXML
     public void initialize() {
-        // Colonnes
-        colTitre.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getTitre()));
-
-        colTemps.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getDuree() + " min"));
-
-        colDescriptionCourte
-                .setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getDescriptionCourte()));
-        colCategorie.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getCategorie()));
-
         // Charger la 1ère page
         chargerPage();
 
@@ -101,12 +93,11 @@ public class EvenementController {
         event_field.textProperty().addListener((obs, oldValue, newValue) -> filtrerListe(newValue, cbFilterCategorie.getValue()));
         cbFilterCategorie.valueProperty().addListener((obs, oldVal, newVal) -> filtrerListe(event_field.getText(), newVal));
 
-        // Boutons
-        reserve_event.setOnAction(e -> ouvrirFenetreReservation());
-        create_event.setOnAction(e -> ouvrirFenetreCreation());
-        show_event.setOnAction(e -> consulterEvenementSelectionne());
-        edit_event.setOnAction(e -> modifierEvenementSelectionne());
-        delete_event.setOnAction(e -> supprimerEvenementSelectionne());
+        // Boutons - these will now show alerts as they need a card selection
+        reserve_event.setOnAction(e -> montrerAlerte("Veuillez cliquer sur 'Réserver' sur une carte."));
+        show_event.setOnAction(e -> montrerAlerte("Veuillez cliquer sur une carte pour voir les détails."));
+        edit_event.setOnAction(e -> montrerAlerte("Veuillez cliquer sur 'Modifier' sur une carte."));
+        delete_event.setOnAction(e -> montrerAlerte("Veuillez cliquer sur 'Supprimer' sur une carte."));
 
         if (utils.SessionManager.isAdmin()) {
             create_event.setVisible(true);
@@ -224,7 +215,7 @@ public class EvenementController {
         try {
             List<Evenement> events = dao.findPaginated(page, LIMIT);
             eventsData.setAll(events);
-            event_table.setItems(eventsData);
+            refreshEventCards(eventsData);
             labelPage.setText("Page " + page);
 
             // Désactiver / activer les boutons
@@ -234,6 +225,93 @@ public class EvenementController {
             e.printStackTrace();
             montrerAlerte("Erreur lors du chargement des évènements.");
         }
+    }
+
+    private void refreshEventCards(List<Evenement> events) {
+        if (event_container == null) return;
+        event_container.getChildren().clear();
+        for (Evenement ev : events) {
+            event_container.getChildren().add(createEventCard(ev));
+        }
+    }
+
+    private javafx.scene.Node createEventCard(Evenement ev) {
+        javafx.scene.layout.VBox card = new javafx.scene.layout.VBox();
+        card.getStyleClass().add("event-card");
+        card.setPrefWidth(250);
+        card.setSpacing(0);
+
+        // Poster
+        javafx.scene.image.ImageView poster = new javafx.scene.image.ImageView();
+        poster.setFitWidth(250);
+        poster.setFitHeight(300);
+        poster.setPreserveRatio(false);
+        poster.getStyleClass().add("event-card-poster");
+        
+        // Load image
+        String path = ev.getAffiche();
+        if (path != null && !path.isEmpty()) {
+            try {
+                // Try absolute or relative
+                java.io.File file = new java.io.File(path);
+                if (file.exists()) {
+                    poster.setImage(new javafx.scene.image.Image(file.toURI().toString()));
+                } else {
+                    // Try classpath
+                    poster.setImage(new javafx.scene.image.Image(getClass().getResource("/" + path).toExternalForm()));
+                }
+            } catch (Exception e) {
+                // Fallback icon or empty
+            }
+        }
+
+        javafx.scene.layout.VBox info = new javafx.scene.layout.VBox();
+        info.getStyleClass().add("event-card-info");
+        
+        Label cat = new Label(ev.getCategorie());
+        cat.getStyleClass().add("event-card-category");
+        
+        Label title = new Label(ev.getTitre());
+        title.getStyleClass().add("event-card-title");
+        title.setWrapText(true);
+        
+        Label desc = new Label(ev.getDescriptionCourte());
+        desc.getStyleClass().add("event-card-description");
+        desc.setWrapText(true);
+        desc.setMinHeight(40);
+        
+        Button btnReserve = new Button("Réserver");
+        btnReserve.setMaxWidth(Double.MAX_VALUE);
+        btnReserve.setOnAction(e -> ouvrirFenetreReservation(ev));
+
+        info.getChildren().addAll(cat, title, desc, btnReserve);
+
+        if (utils.SessionManager.isAdmin()) {
+            javafx.scene.layout.HBox adminActions = new javafx.scene.layout.HBox(10);
+            adminActions.setStyle("-fx-padding: 10 0 0 0; -fx-alignment: CENTER;");
+            
+            Button btnEdit = new Button("Modifier");
+            btnEdit.getStyleClass().add("button-secondary");
+            btnEdit.setOnAction(e -> modifierEvenementSelectionne(ev));
+            
+            Button btnDelete = new Button("Supprimer");
+            btnDelete.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white;");
+            btnDelete.setOnAction(e -> supprimerEvenementSelectionne(ev));
+            
+            adminActions.getChildren().addAll(btnEdit, btnDelete);
+            info.getChildren().add(adminActions);
+        }
+
+        card.getChildren().addAll(poster, info);
+        
+        // Clicking the card (anywhere but buttons) shows details
+        card.setOnMouseClicked(e -> {
+            if (!(e.getTarget() instanceof Button)) {
+                consulterEvenementSelectionne(ev);
+            }
+        });
+        
+        return card;
     }
 
     @FXML
@@ -250,6 +328,35 @@ public class EvenementController {
         }
     }
 
+    // === Image Upload Helper ===
+    private String handleChoisirImage(Stage owner) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir une affiche");
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif")
+        );
+        File selectedFile = fileChooser.showOpenDialog(owner);
+        if (selectedFile != null) {
+            try {
+                // Ensure directory exists
+                File dir = new File("ressource/posters");
+                if (!dir.exists()) dir.mkdirs();
+
+                // Unique filename
+                String extension = selectedFile.getName().substring(selectedFile.getName().lastIndexOf("."));
+                String newName = UUID.randomUUID().toString() + extension;
+                Path targetPath = Paths.get("ressource/posters", newName);
+
+                Files.copy(selectedFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+                return "ressource/posters/" + newName;
+            } catch (IOException e) {
+                e.printStackTrace();
+                montrerAlerte("Erreur lors de la copie de l'image.");
+            }
+        }
+        return null;
+    }
+
     // === Recherche ===
     private void filtrerListe(String filtreText, String filtreCat) {
         String lower = filtreText == null ? "" : filtreText.toLowerCase();
@@ -260,7 +367,7 @@ public class EvenementController {
             boolean matchesCat = !filterByCategory || (e.getCategorie() != null && e.getCategorie().equals(filtreCat));
             return matchesName && matchesCat;
         });
-        event_table.setItems(filtered);
+        refreshEventCards(filtered);
     }
 
     // === Création ===
@@ -347,6 +454,18 @@ public class EvenementController {
         grid.addRow(8, new Label("Salle:"), cbSalle);
         grid.addRow(9, new Label("Date & Heure:"), dateHeureField);
 
+        Button btnChoisirAffiche = new Button("Choisir une affiche");
+        Label affichePathLabel = new Label("Aucune affiche sélectionnée");
+        final String[] selectedImagePath = { null };
+        btnChoisirAffiche.setOnAction(e -> {
+            String path = handleChoisirImage((Stage) dialog.getDialogPane().getScene().getWindow());
+            if (path != null) {
+                selectedImagePath[0] = path;
+                affichePathLabel.setText(new File(path).getName());
+            }
+        });
+        grid.addRow(10, new Label("Affiche:"), new HBox(10, btnChoisirAffiche, affichePathLabel));
+
         dialog.getDialogPane().setContent(grid);
 
         var okButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
@@ -372,8 +491,7 @@ public class EvenementController {
                             langueField.getText(),
                             ageMin,
                             cbCategorie.getValue());
-
-                    // Attach extra selections so we can process them after returning
+                    newEv.setAffiche(selectedImagePath[0]);
                     return newEv;
                 } catch (NumberFormatException e) {
                     montrerAlerte("Durée et âge minimum doivent être des nombres.");
@@ -424,8 +542,7 @@ public class EvenementController {
     }
 
     // === Consultation ===
-    private void consulterEvenementSelectionne() {
-        Evenement selected = event_table.getSelectionModel().getSelectedItem();
+    private void consulterEvenementSelectionne(Evenement selected) {
         if (selected == null) {
             montrerAlerte("Veuillez sélectionner un évènement.");
             return;
@@ -470,8 +587,7 @@ public class EvenementController {
     }
 
     // === Modification ===
-    private void modifierEvenementSelectionne() {
-        Evenement selected = event_table.getSelectionModel().getSelectedItem();
+    private void modifierEvenementSelectionne(Evenement selected) {
         if (selected == null) {
             montrerAlerte("Veuillez sélectionner un évènement à modifier.");
             return;
@@ -499,6 +615,17 @@ public class EvenementController {
 
         // Reference variables to hold current Seance details
         final int[] currentSeanceId = { -1 };
+
+        final String[] selectedImagePath = { selected.getAffiche() };
+        Button btnChoisirAffiche = new Button("Choisir une affiche");
+        Label affichePathLabel = new Label(selected.getAffiche() != null ? selected.getAffiche() : "Aucune affiche sélectionnée");
+        btnChoisirAffiche.setOnAction(e -> {
+            String path = handleChoisirImage((Stage) dialog.getDialogPane().getScene().getWindow());
+            if (path != null) {
+                selectedImagePath[0] = path;
+                affichePathLabel.setText(path);
+            }
+        });
 
         try {
             LieuDAO lieuDAO = new LieuDAO();
@@ -614,6 +741,7 @@ public class EvenementController {
         grid.addRow(7, new Label("Lieu:"), cbLieu);
         grid.addRow(8, new Label("Salle:"), cbSalle);
         grid.addRow(9, new Label("Date & Heure:"), dateHeureField);
+        grid.addRow(10, new Label("Affiche:"), new HBox(10, btnChoisirAffiche, affichePathLabel));
 
         dialog.getDialogPane().setContent(grid);
 
@@ -640,7 +768,7 @@ public class EvenementController {
                             langueField.getText(),
                             ageMin,
                             cbCategorie.getValue());
-
+                    editedEv.setAffiche(selectedImagePath[0]);
                     return editedEv;
                 } catch (NumberFormatException e) {
                     montrerAlerte("Durée et âge minimum doivent être des nombres.");
@@ -681,8 +809,7 @@ public class EvenementController {
     }
 
     // === Réservation ===
-    private void ouvrirFenetreReservation() {
-        Evenement selected = event_table.getSelectionModel().getSelectedItem();
+    private void ouvrirFenetreReservation(Evenement selected) {
         if (selected == null) {
             montrerAlerte("Veuillez sélectionner un évènement pour réserver.");
             return;
@@ -743,8 +870,7 @@ public class EvenementController {
     }
 
     // === Suppression ===
-    private void supprimerEvenementSelectionne() {
-        Evenement selected = event_table.getSelectionModel().getSelectedItem();
+    private void supprimerEvenementSelectionne(Evenement selected) {
         if (selected == null) {
             montrerAlerte("Veuillez sélectionner un évènement à supprimer.");
             return;

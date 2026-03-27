@@ -49,8 +49,8 @@ public class EvenementDAO {
 
     public void ajouter(Evenement obj) throws SQLException {
         String sql = "INSERT INTO Evenement " +
-                "(titre, description_courte, description_longue, duree, langue, age_min, categorie) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                "(titre, description_courte, description_longue, duree, langue, age_min, categorie, affiche) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         Connection conn = MySQLConnection.connect();
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, obj.getTitre());
@@ -60,6 +60,7 @@ public class EvenementDAO {
         ps.setString(5, obj.getLangue());
         ps.setInt(6, obj.getAgeMin());
         ps.setString(7, obj.getCategorie());
+        ps.setString(8, obj.getAffiche());
         ps.executeUpdate();
         ps.close();
         conn.close();
@@ -68,7 +69,7 @@ public class EvenementDAO {
     public void modifier(Evenement obj) throws SQLException {
         String sql = "UPDATE Evenement SET " +
                 "titre=?, description_courte=?, description_longue=?, " +
-                "duree=?, langue=?, age_min=?, categorie=? " +
+                "duree=?, langue=?, age_min=?, categorie=?, affiche=? " +
                 "WHERE id_evenement=?";
         Connection conn = MySQLConnection.connect();
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -79,7 +80,8 @@ public class EvenementDAO {
         ps.setString(5, obj.getLangue());
         ps.setInt(6, obj.getAgeMin());
         ps.setString(7, obj.getCategorie());
-        ps.setInt(8, obj.getId());
+        ps.setString(8, obj.getAffiche());
+        ps.setInt(9, obj.getId());
         ps.executeUpdate();
         ps.close();
         conn.close();
@@ -93,6 +95,20 @@ public class EvenementDAO {
         ps.executeUpdate();
         ps.close();
         conn.close();
+    }
+
+    public Evenement trouver(int id) throws SQLException {
+        String sql = "SELECT * FROM Evenement WHERE id_evenement = ?";
+        try (Connection conn = MySQLConnection.connect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+            }
+        }
+        return null;
     }
 
     private Evenement mapRow(ResultSet rs) throws SQLException {
@@ -110,7 +126,8 @@ public class EvenementDAO {
                 rs.getInt("duree"),
                 rs.getString("langue"),
                 rs.getInt("age_min"),
-                cat != null ? cat : "Autre"
+                cat != null ? cat : "Autre",
+                rs.getString("affiche")
         );
     }
 }

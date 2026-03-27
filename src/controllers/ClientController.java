@@ -24,6 +24,9 @@ public class ClientController {
     @FXML
     private Label lblWelcome;
 
+    @FXML
+    private Label lblSolde;
+
     public ClientController() {
         instance = this;
     }
@@ -37,6 +40,14 @@ public class ClientController {
         Client currentUser = SessionManager.getCurrentUser();
         if (currentUser != null) {
             lblWelcome.setText("Bienvenue, " + currentUser.getNom() + " !");
+            refreshBalance();
+        }
+    }
+
+    public void refreshBalance() {
+        Client currentUser = SessionManager.getCurrentUser();
+        if (currentUser != null && lblSolde != null) {
+            lblSolde.setText(String.format("Solde: %.2f €", currentUser.getSolde()));
         }
     }
 

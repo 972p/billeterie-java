@@ -48,6 +48,10 @@
                            <Label text="Adresse :" style="-fx-font-weight: bold; -fx-text-fill: white;" prefWidth="100.0" />
                            <Label fx:id="lblAdresse" text="Chargement..." wrapText="true" maxWidth="250.0" style="-fx-text-fill: #cccccc;" />
                         </HBox>
+                        <HBox spacing="10.0">
+                           <Label text="Solde :" style="-fx-font-weight: bold; -fx-text-fill: white;" prefWidth="100.0" />
+                           <Label fx:id="lblSolde" text="0.00 €" style="-fx-text-fill: #bb86fc; -fx-font-weight: bold;" />
+                        </HBox>
                      </children>
                   </VBox>
                </children>

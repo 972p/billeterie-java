@@ -41,12 +41,19 @@ public class SeedDatabase {
 
             // 3. Insert events and seances
             PreparedStatement psEv = conn.prepareStatement(
-                "INSERT INTO Evenement (titre, description_courte, description_longue, duree, langue, age_min) VALUES (?,?,?,?,?,?)",
+                "INSERT INTO Evenement (titre, description_courte, description_longue, duree, langue, age_min, categorie, affiche) VALUES (?,?,?,?,?,?,?,?)",
                 java.sql.Statement.RETURN_GENERATED_KEYS);
             PreparedStatement psSeance = conn.prepareStatement(
                 "INSERT INTO Seance (id_evenement, id_lieu, id_salle, date_heure) VALUES (?,?,?,?)");
             PreparedStatement psTarif = conn.prepareStatement(
                 "INSERT INTO Tarif (id_evenement, libelle, prix) VALUES (?,?,?)");
+
+            String[] posters = {
+                "ressource/posters/miserables.png",
+                "ressource/posters/daftpunk.png",
+                "ressource/posters/psgom.png",
+                null, null, null, null, null, null, null
+            };
 
             String[] dates = {
                 "2026-04-12 19:30:00", "2026-04-15 20:00:00", "2026-04-18 21:00:00",
@@ -63,6 +70,8 @@ public class SeedDatabase {
                 psEv.setInt(4, Integer.parseInt(EVENTS[i][3]));
                 psEv.setString(5, EVENTS[i][4]);
                 psEv.setInt(6, Integer.parseInt(EVENTS[i][5]));
+                psEv.setString(7, EVENTS[i][6]);
+                psEv.setString(8, posters[i]);
                 psEv.executeUpdate();
 
                 ResultSet gk = psEv.getGeneratedKeys();
@@ -83,7 +92,9 @@ public class SeedDatabase {
                 psTarif.setDouble(3, prices[i] * 0.5); psTarif.executeUpdate();
             }
 
-            System.out.println("Done! Inserted " + EVENTS.length + " premium events with seances and tarifs.");
+            // 4. Update demo user balance
+            conn.createStatement().executeUpdate("UPDATE Client SET solde = 500.0 WHERE email = 'user@example.com'");
+            System.out.println("Done! Updated schema, inserted events, and credited demo user.");
         } catch (Exception e) { e.printStackTrace(); }
     }
 }

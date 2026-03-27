@@ -47,4 +47,8 @@ public class Billet {
     public String getDate_achat() {
         return date_achat;
     }
+
+    public void setStatut(String statut) {
+        this.statut = statut;
+    }
 }

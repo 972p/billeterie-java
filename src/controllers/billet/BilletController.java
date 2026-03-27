@@ -1,6 +1,7 @@
 package controllers.billet;
 
 import DAO.BilletDAO;
+import DAO.ClientDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -53,6 +54,9 @@ public class BilletController {
     private TableColumn<BilletDisplay, Double> colPrix;
 
     @FXML
+    private TableColumn<BilletDisplay, String> colStatut;
+
+    @FXML
     public void initialize() {
         colEvent.setCellValueFactory(new PropertyValueFactory<>("nom_evenement"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("date_seance"));
@@ -61,6 +65,7 @@ public class BilletController {
         colSalle.setCellValueFactory(new PropertyValueFactory<>("nom_salle"));
         colSiege.setCellValueFactory(new PropertyValueFactory<>("siegeComplet"));
         colPrix.setCellValueFactory(new PropertyValueFactory<>("prix"));
+        colStatut.setCellValueFactory(new PropertyValueFactory<>("statut"));
 
         loadBillets();
     }
@@ -105,6 +110,40 @@ public class BilletController {
                 e.printStackTrace();
                 showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors de la création du PDF.");
             }
+        }
+    }
+
+    @FXML
+    private void handleAnnulerBillet(ActionEvent event) {
+        BilletDisplay selected = tableBillets.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert(Alert.AlertType.WARNING, "Attention", "Veuillez sélectionner un billet à annuler.");
+            return;
+        }
+
+        if (!"VALIDE".equals(selected.getStatut())) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Seul un billet VALIDE peut être annulé.");
+            return;
+        }
+
+        try {
+            BilletDAO billetDAO = new BilletDAO();
+            billetDAO.annulerBillet(selected.getId_billet());
+            
+            // Reload user in session to update balance
+            Client currentUser = SessionManager.getCurrentUser();
+            ClientDAO clientDAO = new ClientDAO();
+            // We need a getById or re-authenticate. Let's assume we can fetch by email.
+            Client updatedUser = clientDAO.authentifier(currentUser.getEmail(), currentUser.getMotDePasse());
+            if (updatedUser != null) {
+                SessionManager.setCurrentUser(updatedUser);
+            }
+
+            loadBillets();
+            showAlert(Alert.AlertType.INFORMATION, "Succès", "Le billet a été annulé et votre compte a été crédité de " + selected.getPrix() + " €.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'annuler le billet : " + e.getMessage());
         }
     }
 

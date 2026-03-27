@@ -9,9 +9,10 @@ public class Client {
     private String motDePasse;
     private String role;
     private String photoProfil;
+    private double solde;
 
     public Client(int id, String nom, String email, String telephone, String adresse, String motDePasse, String role,
-            String photoProfil) {
+            String photoProfil, double solde) {
         this.id_client = id;
         this.nom = nom;
         this.email = email;
@@ -20,6 +21,12 @@ public class Client {
         this.motDePasse = motDePasse;
         this.role = role;
         this.photoProfil = photoProfil;
+        this.solde = solde;
+    }
+
+    public Client(int id, String nom, String email, String telephone, String adresse, String motDePasse, String role,
+            String photoProfil) {
+        this(id, nom, email, telephone, adresse, motDePasse, role, photoProfil, 0.0);
     }
 
     public Client(int id, String nom, String email, String telephone, String adresse, String motDePasse, String role) {
@@ -28,7 +35,7 @@ public class Client {
 
     // Constructor used for registering a new client without knowing ID yet
     public Client(String nom, String email, String telephone, String adresse, String motDePasse, String role,
-            String photoProfil) {
+            String photoProfil, double solde) {
         this.nom = nom;
         this.email = email;
         this.telephone = telephone;
@@ -36,6 +43,12 @@ public class Client {
         this.motDePasse = motDePasse;
         this.role = role;
         this.photoProfil = photoProfil;
+        this.solde = solde;
+    }
+
+    public Client(String nom, String email, String telephone, String adresse, String motDePasse, String role,
+            String photoProfil) {
+        this(nom, email, telephone, adresse, motDePasse, role, photoProfil, 0.0);
     }
 
     public Client(String nom, String email, String telephone, String adresse, String motDePasse, String role) {
@@ -100,5 +113,13 @@ public class Client {
 
     public void setPhotoProfil(String photoProfil) {
         this.photoProfil = photoProfil;
+    }
+
+    public double getSolde() {
+        return solde;
+    }
+
+    public void setSolde(double solde) {
+        this.solde = solde;
     }
 }

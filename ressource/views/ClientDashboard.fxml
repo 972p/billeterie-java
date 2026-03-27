@@ -14,6 +14,11 @@
             <Label text="Espace Client" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;"/>
             <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                <children>
+                  <Label fx:id="lblSolde" style="-fx-text-fill: #bb86fc; -fx-font-size: 18; -fx-font-weight: bold; -fx-margin: 0 20 0 0;" text="Solde: 0.00 €">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin>
+                  </Label>
                   <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #dc3545; -fx-text-fill: white;" text="Déconnexion" />
                </children>
             </HBox>

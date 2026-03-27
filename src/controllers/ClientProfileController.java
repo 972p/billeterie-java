@@ -38,6 +38,9 @@ public class ClientProfileController {
     @FXML
     private Label lblAdresse;
 
+    @FXML
+    private Label lblSolde;
+
     private ClientDAO clientDAO = new ClientDAO();
 
     @FXML
@@ -52,6 +55,7 @@ public class ClientProfileController {
             lblEmail.setText(currentUser.getEmail());
             lblTelephone.setText(currentUser.getTelephone());
             lblAdresse.setText(currentUser.getAdresse());
+            lblSolde.setText(String.format("%.2f €", currentUser.getSolde()));
 
             // Charger l'image si elle existe
             String photoPath = currentUser.getPhotoProfil();

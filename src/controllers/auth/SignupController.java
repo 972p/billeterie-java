@@ -49,6 +49,19 @@ public class SignupController {
             return;
         }
 
+        // Regex Validation
+        String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+        if (!email.matches(emailRegex)) {
+            showError("Format d'email invalide.");
+            return;
+        }
+
+        String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$";
+        if (!password.matches(passwordRegex)) {
+            showError("Le mot de passe doit contenir au moins 8 caractères, dont une lettre et un chiffre.");
+            return;
+        }
+
         if (!password.equals(confirmPassword)) {
             showError("Les mots de passe ne correspondent pas.");
             return;
