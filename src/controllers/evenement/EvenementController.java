@@ -7,17 +7,21 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.image.*;
 import javafx.geometry.Insets;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import models.Evenement;
 import models.Lieu;
 import models.Salle;
-import models.Seance;
 import DAO.LieuDAO;
 import DAO.SalleDAO;
 import DAO.SeanceDAO;
+import DAO.PrestataireDAO;
+import DAO.ServiceDAO;
+import DAO.EvenementServiceDAO;
+import models.Prestataire;
+import models.Service;
+import models.Seance;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,6 +105,8 @@ public class EvenementController {
 
         if (utils.SessionManager.isAdmin()) {
             create_event.setVisible(true);
+            create_event.setOnAction(e -> ouvrirFenetreCreation());
+            
             edit_event.setVisible(true);
             delete_event.setVisible(true);
 
@@ -438,6 +444,44 @@ public class EvenementController {
             }
         });
 
+        ComboBox<Prestataire> cbPrestataire = new ComboBox<>();
+        VBox servicesBox = new VBox(5);
+        try {
+            PrestataireDAO prestataireDAO = new PrestataireDAO();
+            List<Prestataire> prestataires = prestataireDAO.trouverTous();
+            // Optional empty choice
+            prestataires.add(0, new Prestataire(0, "Aucun prestataire", "", "", "", ""));
+            cbPrestataire.setItems(FXCollections.observableArrayList(prestataires));
+            cbPrestataire.setConverter(new javafx.util.StringConverter<Prestataire>() {
+                @Override
+                public String toString(Prestataire p) {
+                    return p != null ? p.getNom() : "";
+                }
+                @Override
+                public Prestataire fromString(String string) { return null; }
+            });
+            cbPrestataire.getSelectionModel().select(0);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        cbPrestataire.valueProperty().addListener((obs, oldVal, newVal) -> {
+            servicesBox.getChildren().clear();
+            if (newVal != null && newVal.getId() > 0) {
+                try {
+                    ServiceDAO serviceDAO = new ServiceDAO();
+                    List<Service> services = serviceDAO.trouverParPrestataire(newVal.getId());
+                    for (Service svc : services) {
+                        CheckBox chk = new CheckBox(svc.getNom() + " (" + svc.getDescription() + ")");
+                        chk.setUserData(svc.getId());
+                        servicesBox.getChildren().add(chk);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -453,6 +497,8 @@ public class EvenementController {
         grid.addRow(7, new Label("Lieu:"), cbLieu);
         grid.addRow(8, new Label("Salle:"), cbSalle);
         grid.addRow(9, new Label("Date & Heure:"), dateHeureField);
+        grid.addRow(10, new Label("Prestataire:"), cbPrestataire);
+        grid.addRow(11, new Label("Services liés:"), servicesBox);
 
         Button btnChoisirAffiche = new Button("Choisir une affiche");
         Label affichePathLabel = new Label("Aucune affiche sélectionnée");
@@ -464,7 +510,7 @@ public class EvenementController {
                 affichePathLabel.setText(new File(path).getName());
             }
         });
-        grid.addRow(10, new Label("Affiche:"), new HBox(10, btnChoisirAffiche, affichePathLabel));
+        grid.addRow(12, new Label("Affiche:"), new HBox(10, btnChoisirAffiche, affichePathLabel));
 
         dialog.getDialogPane().setContent(grid);
 
@@ -492,6 +538,11 @@ public class EvenementController {
                             ageMin,
                             cbCategorie.getValue());
                     newEv.setAffiche(selectedImagePath[0]);
+                    
+                    if (cbPrestataire.getValue() != null && cbPrestataire.getValue().getId() > 0) {
+                        newEv.setPrestataireId(cbPrestataire.getValue().getId());
+                    }
+                    
                     return newEv;
                 } catch (NumberFormatException e) {
                     montrerAlerte("Durée et âge minimum doivent être des nombres.");
@@ -533,10 +584,36 @@ public class EvenementController {
                     seanceDAO.ajouter(newSeance);
                 }
 
+                // 3. Link Services
+                if (ev.getPrestataireId() != null) {
+                    EvenementServiceDAO evtSvcDAO = new EvenementServiceDAO();
+                    for (javafx.scene.Node node : servicesBox.getChildren()) {
+                        if (node instanceof CheckBox) {
+                            CheckBox chk = (CheckBox) node;
+                            if (chk.isSelected()) {
+                                int svcId = (int) chk.getUserData();
+                                // Assuming we have the generatedEventId. If Seance block didn't run, we must fetch it.
+                                int evtId = ev.getId();
+                                if (evtId == 0) {
+                                    try (java.sql.Connection conn = database.MySQLConnection.connect();
+                                         java.sql.PreparedStatement ps = conn.prepareStatement(
+                                                 "SELECT id_evenement FROM Evenement ORDER BY id_evenement DESC LIMIT 1")) {
+                                        java.sql.ResultSet rs = ps.executeQuery();
+                                        if (rs.next()) {
+                                            evtId = rs.getInt(1);
+                                        }
+                                    }
+                                }
+                                evtSvcDAO.lierServiceAEvenement(evtId, svcId);
+                            }
+                        }
+                    }
+                }
+
                 chargerPage();
             } catch (Exception e) {
                 e.printStackTrace();
-                montrerAlerte("Erreur lors de la création de l'évènement.");
+                montrerAlerte("Erreur DB lors de la création : " + e.getMessage());
             }
         });
     }
@@ -597,6 +674,8 @@ public class EvenementController {
         dialog.getDialogPane().getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
         dialog.setTitle("Modifier un évènement");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        EvenementDAO dao = new EvenementDAO();
 
         TextField titreField = new TextField(selected.getTitre());
         TextField descCourteField = new TextField(selected.getDescriptionCourte());
@@ -726,6 +805,75 @@ public class EvenementController {
             }
         });
 
+        ComboBox<Prestataire> cbPrestataire = new ComboBox<>();
+        VBox servicesBox = new VBox(5);
+        List<Integer> linkedServices = new java.util.ArrayList<>();
+        
+        try {
+            PrestataireDAO prestataireDAO = new PrestataireDAO();
+            List<Prestataire> prestataires = prestataireDAO.trouverTous();
+            prestataires.add(0, new Prestataire(0, "Aucun prestataire", "", "", "", ""));
+            cbPrestataire.setItems(FXCollections.observableArrayList(prestataires));
+            cbPrestataire.setConverter(new javafx.util.StringConverter<Prestataire>() {
+                @Override
+                public String toString(Prestataire p) { return p != null ? p.getNom() : ""; }
+                @Override
+                public Prestataire fromString(String string) { return null; }
+            });
+            
+            // Preselect
+            if (selected.getPrestataireId() != null && selected.getPrestataireId() > 0) {
+                for (Prestataire p : prestataires) {
+                    if (p.getId() == selected.getPrestataireId()) {
+                        cbPrestataire.getSelectionModel().select(p);
+                        break;
+                    }
+                }
+                EvenementServiceDAO eSvcDAO = new EvenementServiceDAO();
+                linkedServices.addAll(eSvcDAO.recupererIdServicesPourEvenement(selected.getId()));
+            } else {
+                cbPrestataire.getSelectionModel().select(0);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        cbPrestataire.valueProperty().addListener((obs, oldVal, newVal) -> {
+            servicesBox.getChildren().clear();
+            if (newVal != null && newVal.getId() > 0) {
+                try {
+                    ServiceDAO serviceDAO = new ServiceDAO();
+                    List<Service> services = serviceDAO.trouverParPrestataire(newVal.getId());
+                    int prevId = selected.getPrestataireId() != null ? selected.getPrestataireId() : 0;
+                    for (Service svc : services) {
+                        CheckBox chk = new CheckBox(svc.getNom() + " (" + svc.getDescription() + ")");
+                        chk.setUserData(svc.getId());
+                        // Pre-check if it was linked and we are still selecting the same provider
+                        if (linkedServices.contains((Integer) svc.getId()) && newVal.getId() == prevId) {
+                            chk.setSelected(true);
+                        }
+                        servicesBox.getChildren().add(chk);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        
+        // Initial populate for services Box
+        if (cbPrestataire.getValue() != null && cbPrestataire.getValue().getId() > 0) {
+            try {
+                ServiceDAO serviceDAO = new ServiceDAO();
+                List<Service> services = serviceDAO.trouverParPrestataire(cbPrestataire.getValue().getId());
+                for (Service svc : services) {
+                    CheckBox chk = new CheckBox(svc.getNom() + " (" + svc.getDescription() + ")");
+                    chk.setUserData(svc.getId());
+                    if (linkedServices.contains((Integer) svc.getId())) chk.setSelected(true);
+                    servicesBox.getChildren().add(chk);
+                }
+            } catch (Exception e) {}
+        }
+
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -741,7 +889,9 @@ public class EvenementController {
         grid.addRow(7, new Label("Lieu:"), cbLieu);
         grid.addRow(8, new Label("Salle:"), cbSalle);
         grid.addRow(9, new Label("Date & Heure:"), dateHeureField);
-        grid.addRow(10, new Label("Affiche:"), new HBox(10, btnChoisirAffiche, affichePathLabel));
+        grid.addRow(10, new Label("Prestataire:"), cbPrestataire);
+        grid.addRow(11, new Label("Services liés:"), servicesBox);
+        grid.addRow(12, new Label("Affiche:"), new HBox(10, btnChoisirAffiche, affichePathLabel));
 
         dialog.getDialogPane().setContent(grid);
 
@@ -769,6 +919,11 @@ public class EvenementController {
                             ageMin,
                             cbCategorie.getValue());
                     editedEv.setAffiche(selectedImagePath[0]);
+                    
+                    if (cbPrestataire.getValue() != null && cbPrestataire.getValue().getId() > 0) {
+                        editedEv.setPrestataireId(cbPrestataire.getValue().getId());
+                    }
+                    
                     return editedEv;
                 } catch (NumberFormatException e) {
                     montrerAlerte("Durée et âge minimum doivent être des nombres.");
@@ -800,10 +955,26 @@ public class EvenementController {
                     }
                 }
 
+                // Update Services
+                EvenementServiceDAO evtSvcDAO = new EvenementServiceDAO();
+                evtSvcDAO.supprimerLiaisonsPourEvenement(ev.getId());
+                
+                if (ev.getPrestataireId() != null) {
+                    for (javafx.scene.Node node : servicesBox.getChildren()) {
+                        if (node instanceof CheckBox) {
+                            CheckBox chk = (CheckBox) node;
+                            if (chk.isSelected()) {
+                                int svcId = (int) chk.getUserData();
+                                evtSvcDAO.lierServiceAEvenement(ev.getId(), svcId);
+                            }
+                        }
+                    }
+                }
+
                 chargerPage();
             } catch (Exception e) {
                 e.printStackTrace();
-                montrerAlerte("Erreur lors de la modification de l'évènement.");
+                montrerAlerte("Erreur DB lors de la modification : " + e.getMessage());
             }
         });
     }

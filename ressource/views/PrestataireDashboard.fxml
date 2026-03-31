@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: #1e1e2e;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PrestataireDashboardController">
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: #2b2b3c; -fx-padding: 10 20;" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Espace Prestataire" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;"/>
+            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: #dc3545; -fx-text-fill: white;" text="Déconnexion" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </top>
+   <left>
+      <VBox prefWidth="250.0" spacing="15.0" style="-fx-background-color: #2b2b3c; -fx-padding: 20;" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Menu Principal" style="-fx-text-fill: #bb86fc; -fx-font-weight: bold; -fx-font-size: 14;" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleViewMissions" styleClass="button-secondary" text="Mes Missions" />
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <VBox alignment="CENTER" spacing="20.0" style="-fx-padding: 40;" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="lblWelcome" text="Bienvenue, Prestataire !" style="-fx-text-fill: white; -fx-font-size: 36; -fx-font-weight: bold;"/>
+            <Label text="Consultez les évènements pour lesquels vous êtes assigné." textAlignment="CENTER" style="-fx-text-fill: #cccccc; -fx-font-size: 16;">
+            </Label>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

@@ -28,4 +28,8 @@ public class SessionManager {
     public static boolean isUser() {
         return currentUser != null && "USER".equalsIgnoreCase(currentUser.getRole());
     }
+
+    public static boolean isPrestataire() {
+        return currentUser != null && "PRESTATAIRE".equalsIgnoreCase(currentUser.getRole());
+    }
 }

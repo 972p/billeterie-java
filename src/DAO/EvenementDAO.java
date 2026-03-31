@@ -49,10 +49,10 @@ public class EvenementDAO {
 
     public void ajouter(Evenement obj) throws SQLException {
         String sql = "INSERT INTO Evenement " +
-                "(titre, description_courte, description_longue, duree, langue, age_min, categorie, affiche) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                "(titre, description_courte, description_longue, duree, langue, age_min, categorie, affiche, id_prestataire) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         Connection conn = MySQLConnection.connect();
-        PreparedStatement ps = conn.prepareStatement(sql);
+        PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         ps.setString(1, obj.getTitre());
         ps.setString(2, obj.getDescriptionCourte());
         ps.setString(3, obj.getDescriptionLongue());
@@ -61,7 +61,22 @@ public class EvenementDAO {
         ps.setInt(6, obj.getAgeMin());
         ps.setString(7, obj.getCategorie());
         ps.setString(8, obj.getAffiche());
+
+        if (obj.getPrestataireId() != null && obj.getPrestataireId() > 0) {
+            ps.setInt(9, obj.getPrestataireId());
+        } else {
+            ps.setNull(9, java.sql.Types.INTEGER);
+        }
+
         ps.executeUpdate();
+        
+        // Retrieve generated ID to ensure the insert worked
+        ResultSet rs = ps.getGeneratedKeys();
+        if (rs.next()) {
+            // Since we can't easily mutate the ID in the Evenement object if it's final,
+            // we will let EvenementController handle it by querying DESC LIMIT 1 like before
+        }
+        
         ps.close();
         conn.close();
     }
@@ -69,7 +84,7 @@ public class EvenementDAO {
     public void modifier(Evenement obj) throws SQLException {
         String sql = "UPDATE Evenement SET " +
                 "titre=?, description_courte=?, description_longue=?, " +
-                "duree=?, langue=?, age_min=?, categorie=?, affiche=? " +
+                "duree=?, langue=?, age_min=?, categorie=?, affiche=?, id_prestataire=? " +
                 "WHERE id_evenement=?";
         Connection conn = MySQLConnection.connect();
         PreparedStatement ps = conn.prepareStatement(sql);
@@ -81,7 +96,14 @@ public class EvenementDAO {
         ps.setInt(6, obj.getAgeMin());
         ps.setString(7, obj.getCategorie());
         ps.setString(8, obj.getAffiche());
-        ps.setInt(9, obj.getId());
+
+        if (obj.getPrestataireId() != null && obj.getPrestataireId() > 0) {
+            ps.setInt(9, obj.getPrestataireId());
+        } else {
+            ps.setNull(9, java.sql.Types.INTEGER);
+        }
+
+        ps.setInt(10, obj.getId());
         ps.executeUpdate();
         ps.close();
         conn.close();
@@ -118,7 +140,7 @@ public class EvenementDAO {
         } catch (SQLException e) {
             // ignore if column doesn't exist yet
         }
-        return new Evenement(
+        Evenement ev = new Evenement(
                 rs.getInt("id_evenement"),
                 rs.getString("titre"),
                 rs.getString("description_courte"),
@@ -129,5 +151,12 @@ public class EvenementDAO {
                 cat != null ? cat : "Autre",
                 rs.getString("affiche")
         );
+
+        int pId = rs.getInt("id_prestataire");
+        if (!rs.wasNull()) {
+            ev.setPrestataireId(pId);
+        }
+
+        return ev;
     }
 }

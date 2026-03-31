@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminPrestatairesController" spacing="20" alignment="TOP_CENTER" style="-fx-padding: 30; -fx-background-color: #1e1e2e;">
+    
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <Label text="🤝 Gestion des Prestataires" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #bb86fc;"/>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="➕ Ajouter un Prestataire" onAction="#handleAjouter" style="-fx-background-color: #bb86fc; -fx-text-fill: #1e1e2e; -fx-font-weight: bold; -fx-padding: 10 20;"/>
+    </HBox>
+    
+    <TableView fx:id="prestataires_table" VBox.vgrow="ALWAYS" style="-fx-background-color: #2b2b3c; -fx-border-color: #3f3f5f; -fx-border-radius: 5;">
+        <columns>
+            <TableColumn fx:id="colNom" text="Nom" prefWidth="150" />
+            <TableColumn fx:id="colSpecialite" text="Spécialité" prefWidth="150" />
+            <TableColumn fx:id="colContact" text="Contact" prefWidth="150" />
+            <TableColumn fx:id="colEmail" text="Email" prefWidth="200" />
+            <TableColumn fx:id="colActions" text="Actions" prefWidth="200" />
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
+    </TableView>
+
+</VBox>

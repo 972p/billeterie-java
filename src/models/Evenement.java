@@ -11,9 +11,14 @@ public class Evenement {
     private final int age_min;
     private final String categorie;
     private String affiche;
+    private Integer prestataireId;
 
     public void setAffiche(String affiche) {
         this.affiche = affiche;
+    }
+
+    public void setPrestataireId(Integer prestataireId) {
+        this.prestataireId = prestataireId;
     }
 
     public Evenement(int id,
@@ -81,5 +86,9 @@ public class Evenement {
 
     public String getAffiche() {
         return affiche;
+    }
+
+    public Integer getPrestataireId() {
+        return prestataireId;
     }
 }

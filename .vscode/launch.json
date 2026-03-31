@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TestAddEvenement",
+            "request": "launch",
+            "mainClass": "TestAddEvenement",
+            "projectName": "billeterie-java_afec63c9"
+        },
+        {
+            "type": "java",
+            "name": "UpdateSchema",
+            "request": "launch",
+            "mainClass": "UpdateSchema",
+            "projectName": "billeterie-java_afec63c9"
+        },
+        {
+            "type": "java",
             "name": "SetupDatabase",
             "request": "launch",
             "mainClass": "database.SetupDatabase",

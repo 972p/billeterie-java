@@ -72,7 +72,27 @@ public class LoginController {
                     loadView("/views/ClientDashboard.fxml", "Espace Client", event);
                 }
             } else {
-                showAlert(Alert.AlertType.ERROR, "Erreur de connexion", "Email ou mot de passe incorrect.");
+                DAO.PrestataireDAO prestataireDAO = new DAO.PrestataireDAO();
+                models.Prestataire prestataire = prestataireDAO.authentifier(email, password);
+                
+                if (prestataire != null) {
+                    Client prestataireUser = new Client(prestataire.getId(), prestataire.getNom(), email, prestataire.getContact(), "", prestataire.getMotDePasse(), "PRESTATAIRE");
+                    SessionManager.setCurrentUser(prestataireUser);
+
+                    if (chkRemember.isSelected()) {
+                        prefs.put(PREF_EMAIL, email);
+                        prefs.put(PREF_PASSWORD, password);
+                        prefs.putBoolean(PREF_REMEMBER, true);
+                    } else {
+                        prefs.remove(PREF_EMAIL);
+                        prefs.remove(PREF_PASSWORD);
+                        prefs.putBoolean(PREF_REMEMBER, false);
+                    }
+
+                    loadView("/views/PrestataireDashboard.fxml", "Espace Prestataire", event);
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Erreur de connexion", "Email ou mot de passe incorrect.");
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

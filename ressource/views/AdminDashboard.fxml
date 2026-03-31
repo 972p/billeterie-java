@@ -34,6 +34,7 @@
                </VBox.margin>
             </Label>
             <Button maxWidth="1.7976931348623157E808" mnemonicParsing="false" onAction="#handleViewUsers" styleClass="button-secondary" text="👥  Gestion Utilisateurs" />
+            <Button maxWidth="1.7976931348623157E808" mnemonicParsing="false" onAction="#handleViewPrestataires" styleClass="button-secondary" text="🤝  Gestion Prestataires" />
             <Button maxWidth="1.7976931348623157E808" mnemonicParsing="false" onAction="#handleViewReservations" styleClass="button-secondary" text="📊  Gestion Réservations" />
          </children>
       </VBox>

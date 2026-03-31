@@ -90,6 +90,61 @@ public class SetupDatabase {
                     System.out.println("⚠️ La colonne 'categorie' existe peut-être déjà dans Evenement.");
                 }
 
+                // 6.6. Créer la table Prestataire
+                try {
+                    String sqlPrestataire = "CREATE TABLE IF NOT EXISTS Prestataire (" +
+                            "id_prestataire INT AUTO_INCREMENT PRIMARY KEY, " +
+                            "nom VARCHAR(100) NOT NULL, " +
+                            "specialite VARCHAR(100), " +
+                            "contact VARCHAR(100), " +
+                            "login VARCHAR(50), " +
+                            "mot_de_passe VARCHAR(255)" +
+                            ")";
+                    stmt.executeUpdate(sqlPrestataire);
+                    System.out.println("✅ Table 'Prestataire' créée ou déjà existante.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // 6.7. Créer la table Service (liée au prestataire)
+                try {
+                    String sqlService = "CREATE TABLE IF NOT EXISTS Service (" +
+                            "id_service INT AUTO_INCREMENT PRIMARY KEY, " +
+                            "id_prestataire INT NOT NULL, " +
+                            "nom VARCHAR(100) NOT NULL, " +
+                            "description TEXT, " +
+                            "FOREIGN KEY (id_prestataire) REFERENCES Prestataire(id_prestataire) ON DELETE CASCADE" +
+                            ")";
+                    stmt.executeUpdate(sqlService);
+                    System.out.println("✅ Table 'Service' créée ou déjà existante.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // 6.8. Ajouter id_prestataire (nullable) à Evenement
+                try {
+                    stmt.executeUpdate("ALTER TABLE Evenement ADD COLUMN id_prestataire INT NULL");
+                    stmt.executeUpdate("ALTER TABLE Evenement ADD CONSTRAINT fk_evenement_prestataire FOREIGN KEY (id_prestataire) REFERENCES Prestataire(id_prestataire) ON DELETE SET NULL");
+                    System.out.println("✅ Colonne 'id_prestataire' et clé étrangère ajoutées à Evenement.");
+                } catch (Exception e) {
+                    System.out.println("⚠️ La colonne 'id_prestataire' existe peut-être déjà dans Evenement.");
+                }
+
+                // 6.9. Créer la table de liaison Evenement_Service
+                try {
+                    String sqlLink = "CREATE TABLE IF NOT EXISTS Evenement_Service (" +
+                            "id_evenement INT NOT NULL, " +
+                            "id_service INT NOT NULL, " +
+                            "PRIMARY KEY (id_evenement, id_service), " +
+                            "FOREIGN KEY (id_evenement) REFERENCES Evenement(id_evenement) ON DELETE CASCADE, " +
+                            "FOREIGN KEY (id_service) REFERENCES Service(id_service) ON DELETE CASCADE" +
+                            ")";
+                    stmt.executeUpdate(sqlLink);
+                    System.out.println("✅ Table 'Evenement_Service' créée ou déjà existante.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 // 7. Générer des Lieux, Salles et Places avec différentes configurations
                 try {
                     java.sql.ResultSet check = stmt

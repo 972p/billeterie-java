@@ -50,6 +50,11 @@ public class AdminController {
     }
 
     @FXML
+    private void handleViewPrestataires() {
+        loadCenterView("/views/AdminPrestataires.fxml");
+    }
+
+    @FXML
     private void handleViewReservations() {
         loadCenterView("/views/AdminReservations.fxml");
     }
