@@ -8,7 +8,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/views/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/views/auth/Login.fxml"));
             Scene scene = new Scene(root, 400, 400);
 
             // Add the stylesheet
@@ -24,7 +24,7 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        UpdateSchema.main(new String[0]);
+        database.scripts.UpdateSchema.main(new String[0]);
         launch(args);
     }
 

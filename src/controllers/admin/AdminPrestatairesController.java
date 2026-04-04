@@ -1,4 +1,4 @@
-package controllers;
+package controllers.admin;
 
 import DAO.PrestataireDAO;
 import javafx.beans.property.ReadOnlyStringWrapper;

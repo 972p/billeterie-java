@@ -121,7 +121,7 @@ public class EvenementController {
                 btn_espace_client.setManaged(false);
             }
             // Hide the topBar (logout button inside Evenement.fxml) when inside AdminDashboard
-            if (topBar != null && controllers.AdminController.getInstance() != null) {
+            if (topBar != null && controllers.admin.AdminController.getInstance() != null) {
                 topBar.setVisible(false);
                 topBar.setManaged(false);
             }
@@ -149,7 +149,7 @@ public class EvenementController {
     private void handleLogout(javafx.event.ActionEvent event) {
         utils.SessionManager.clearSession();
         try {
-            javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/Login.fxml"));
+            javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/auth/Login.fxml"));
             javafx.stage.Stage stage = (javafx.stage.Stage) ((javafx.scene.Node) event.getSource()).getScene()
                     .getWindow();
             stage.setTitle("Connexion");
@@ -169,7 +169,7 @@ public class EvenementController {
     @FXML
     private void ouvrirEspaceClient() {
         try {
-            javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/ClientDashboard.fxml"));
+            javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/client/ClientDashboard.fxml"));
             javafx.stage.Stage stage = (javafx.stage.Stage) btn_espace_client.getScene().getWindow();
             stage.setTitle("Espace Client");
 
@@ -187,11 +187,11 @@ public class EvenementController {
 
     // === Navigation Admin ===
     private void ouvrirGestionUtilisateurs() {
-        if (controllers.AdminController.getInstance() != null) {
-            controllers.AdminController.getInstance().loadCenterView("/views/AdminUsers.fxml");
+        if (controllers.admin.AdminController.getInstance() != null) {
+            controllers.admin.AdminController.getInstance().loadCenterView("/views/admin/AdminUsers.fxml");
         } else {
             try {
-                javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/AdminUsers.fxml"));
+                javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/admin/AdminUsers.fxml"));
                 javafx.stage.Stage stage = (javafx.stage.Stage) manage_users.getScene().getWindow();
                 stage.setTitle("Gestion des Utilisateurs");
                 javafx.scene.Scene scene = new javafx.scene.Scene(root);
@@ -202,11 +202,11 @@ public class EvenementController {
     }
 
     private void ouvrirGestionReservations() {
-        if (controllers.AdminController.getInstance() != null) {
-            controllers.AdminController.getInstance().loadCenterView("/views/AdminReservations.fxml");
+        if (controllers.admin.AdminController.getInstance() != null) {
+            controllers.admin.AdminController.getInstance().loadCenterView("/views/admin/AdminReservations.fxml");
         } else {
             try {
-                javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/AdminReservations.fxml"));
+                javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/admin/AdminReservations.fxml"));
                 javafx.stage.Stage stage = (javafx.stage.Stage) manage_reservations.getScene().getWindow();
                 stage.setTitle("Gestion des Réservations");
                 javafx.scene.Scene scene = new javafx.scene.Scene(root);
@@ -1021,8 +1021,8 @@ public class EvenementController {
             SeatSelectionController controller = loader.getController();
             controller.initData(selected.getId(), idSeance, idSalle);
 
-            if (!utils.SessionManager.isAdmin() && controllers.ClientController.getInstance() != null) {
-                controllers.ClientController.getInstance().setCenterView(root);
+            if (!utils.SessionManager.isAdmin() && controllers.client.ClientController.getInstance() != null) {
+                controllers.client.ClientController.getInstance().setCenterView(root);
             } else {
                 javafx.stage.Stage stage = (javafx.stage.Stage) reserve_event.getScene().getWindow();
                 stage.setTitle("Sélection des places");

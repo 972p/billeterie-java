@@ -1,4 +1,4 @@
-package controllers;
+package controllers.auth;
 
 import DAO.ClientDAO;
 import javafx.event.ActionEvent;
@@ -67,9 +67,9 @@ public class LoginController {
                 }
 
                 if (SessionManager.isAdmin()) {
-                    loadView("/views/AdminDashboard.fxml", "Tableau de Bord Administrateur", event);
+                    loadView("/views/admin/AdminDashboard.fxml", "Tableau de Bord Administrateur", event);
                 } else {
-                    loadView("/views/ClientDashboard.fxml", "Espace Client", event);
+                    loadView("/views/client/ClientDashboard.fxml", "Espace Client", event);
                 }
             } else {
                 DAO.PrestataireDAO prestataireDAO = new DAO.PrestataireDAO();
@@ -89,7 +89,7 @@ public class LoginController {
                         prefs.putBoolean(PREF_REMEMBER, false);
                     }
 
-                    loadView("/views/PrestataireDashboard.fxml", "Espace Prestataire", event);
+                    loadView("/views/prestataire/PrestataireDashboard.fxml", "Espace Prestataire", event);
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Erreur de connexion", "Email ou mot de passe incorrect.");
                 }

@@ -1,3 +1,5 @@
+package database.scripts;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -151,24 +153,31 @@ public class UpdateSchema {
                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS Evenement_Service (" +
                         "id_evenement INT NOT NULL, " +
                         "id_service INT NOT NULL, " +
+                        "etat VARCHAR(20) DEFAULT 'EN_ATTENTE', " +
                         "PRIMARY KEY (id_evenement, id_service), " +
                         "FOREIGN KEY (id_evenement) REFERENCES Evenement(id_evenement) ON DELETE CASCADE, " +
                         "FOREIGN KEY (id_service) REFERENCES Service(id_service) ON DELETE CASCADE" +
                         ")");
                 System.out.println("Created/Verified 'Evenement_Service' table.");
 
+                // Add etat column if the table already existed without it
+                try {
+                    stmt.executeUpdate("ALTER TABLE Evenement_Service ADD COLUMN etat VARCHAR(20) DEFAULT 'EN_ATTENTE'");
+                    System.out.println("Added 'etat' column to 'Evenement_Service' table.");
+                } catch (Exception e) {}
+
                 // Seed some mapping only if table is empty
                 try {
                     ResultSet countRs = stmt.executeQuery("SELECT COUNT(*) FROM Evenement_Service");
                     if (countRs.next() && countRs.getInt(1) == 0) {
                          // Assign Traiteur (Les Délices de Paris) to all existing events
-                         stmt.executeUpdate("INSERT IGNORE INTO Evenement_Service (id_evenement, id_service) " +
-                                            "SELECT e.id_evenement, s.id_service FROM Evenement e " +
+                         stmt.executeUpdate("INSERT IGNORE INTO Evenement_Service (id_evenement, id_service, etat) " +
+                                            "SELECT e.id_evenement, s.id_service, 'EN_ATTENTE' FROM Evenement e " +
                                             "JOIN Service s ON s.nom = 'Buffet Froid'");
                          
                          // Assign Security (SecurGuard) to all existing events
-                         stmt.executeUpdate("INSERT IGNORE INTO Evenement_Service (id_evenement, id_service) " +
-                                            "SELECT e.id_evenement, s.id_service FROM Evenement e " +
+                         stmt.executeUpdate("INSERT IGNORE INTO Evenement_Service (id_evenement, id_service, etat) " +
+                                            "SELECT e.id_evenement, s.id_service, 'EN_ATTENTE' FROM Evenement e " +
                                             "JOIN Service s ON s.nom = 'Gardiennage'");
                          System.out.println("Seeded test associations between Events and Services.");
                     }

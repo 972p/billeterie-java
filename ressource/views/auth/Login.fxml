@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginController" style="-fx-background-color: #1e1e2e; -fx-padding: 50;">
+<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.auth.LoginController" style="-fx-background-color: #1e1e2e; -fx-padding: 50;">
    <children>
       <Label text="🎟 Billeterie" style="-fx-text-fill: #bb86fc; -fx-font-size: 28; -fx-font-weight: bold;" />
       <Label text="Connexion" style="-fx-text-fill: white; -fx-font-size: 18;" />

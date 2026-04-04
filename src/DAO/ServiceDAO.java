@@ -17,7 +17,7 @@ public class ServiceDAO {
         String sql = "SELECT * FROM Service WHERE id_prestataire = ? ORDER BY nom ASC";
 
         try (Connection conn = MySQLConnection.connect();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, prestataireId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -26,11 +26,30 @@ public class ServiceDAO {
                             rs.getInt("id_service"),
                             rs.getInt("id_prestataire"),
                             rs.getString("nom"),
-                            rs.getString("description")
-                    ));
+                            rs.getString("description")));
                 }
             }
         }
         return services;
+    }
+
+    public void ajouter(Service service) throws SQLException {
+        String sql = "INSERT INTO Service (id_prestataire, nom, description) VALUES (?, ?, ?)";
+        try (Connection conn = MySQLConnection.connect();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, service.getIdPrestataire());
+            ps.setString(2, service.getNom());
+            ps.setString(3, service.getDescription());
+            ps.executeUpdate();
+        }
+    }
+
+    public void supprimer(int idService) throws SQLException {
+        String sql = "DELETE FROM Service WHERE id_service = ?";
+        try (Connection conn = MySQLConnection.connect();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idService);
+            ps.executeUpdate();
+        }
     }
 }

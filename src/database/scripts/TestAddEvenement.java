@@ -1,3 +1,5 @@
+package database.scripts;
+
 import models.Evenement;
 import DAO.EvenementDAO;
 

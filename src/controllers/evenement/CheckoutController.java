@@ -333,8 +333,8 @@ public class CheckoutController {
 
             showAlert(Alert.AlertType.INFORMATION, "Paiement réussi !", "Vos " + selectedSeats.size() + " places sont réservées.");
             
-            if (!utils.SessionManager.isAdmin() && controllers.ClientController.getInstance() != null) {
-                controllers.ClientController.getInstance().loadCenterView("/views/billet/ClientBillets.fxml");
+            if (!utils.SessionManager.isAdmin() && controllers.client.ClientController.getInstance() != null) {
+                controllers.client.ClientController.getInstance().loadCenterView("/views/billet/ClientBillets.fxml");
             } else {
                 Parent root = FXMLLoader.load(getClass().getResource("/views/billet/ClientBillets.fxml"));
                 Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
@@ -354,8 +354,8 @@ public class CheckoutController {
     @FXML
     public void handleCancel(ActionEvent event) {
         try {
-            if (!utils.SessionManager.isAdmin() && controllers.ClientController.getInstance() != null) {
-                controllers.ClientController.getInstance().loadCenterView("/views/evenement/Evenement.fxml");
+            if (!utils.SessionManager.isAdmin() && controllers.client.ClientController.getInstance() != null) {
+                controllers.client.ClientController.getInstance().loadCenterView("/views/evenement/Evenement.fxml");
             } else {
                 Parent root = FXMLLoader.load(getClass().getResource("/views/evenement/Evenement.fxml"));
                 Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();

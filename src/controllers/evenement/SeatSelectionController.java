@@ -155,8 +155,8 @@ public class SeatSelectionController {
             CheckoutController controller = loader.getController();
             controller.initData(idEvenement, idSeance, idSalle, selectedSeats);
 
-            if (!utils.SessionManager.isAdmin() && controllers.ClientController.getInstance() != null) {
-                controllers.ClientController.getInstance().setCenterView(root);
+            if (!utils.SessionManager.isAdmin() && controllers.client.ClientController.getInstance() != null) {
+                controllers.client.ClientController.getInstance().setCenterView(root);
             } else {
                 Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
                 stage.setTitle("Paiement");
@@ -175,8 +175,8 @@ public class SeatSelectionController {
     @FXML
     public void handleReturn(ActionEvent event) {
         try {
-            if (!utils.SessionManager.isAdmin() && controllers.ClientController.getInstance() != null) {
-                controllers.ClientController.getInstance().loadCenterView("/views/evenement/Evenement.fxml");
+            if (!utils.SessionManager.isAdmin() && controllers.client.ClientController.getInstance() != null) {
+                controllers.client.ClientController.getInstance().loadCenterView("/views/evenement/Evenement.fxml");
             } else {
                 Parent root = FXMLLoader.load(getClass().getResource("/views/evenement/Evenement.fxml"));
                 Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();

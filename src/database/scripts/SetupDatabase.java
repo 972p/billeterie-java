@@ -1,4 +1,5 @@
-package database;
+package database.scripts;
+
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -135,11 +136,19 @@ public class SetupDatabase {
                     String sqlLink = "CREATE TABLE IF NOT EXISTS Evenement_Service (" +
                             "id_evenement INT NOT NULL, " +
                             "id_service INT NOT NULL, " +
+                            "etat VARCHAR(20) DEFAULT 'EN_ATTENTE', " +
                             "PRIMARY KEY (id_evenement, id_service), " +
                             "FOREIGN KEY (id_evenement) REFERENCES Evenement(id_evenement) ON DELETE CASCADE, " +
                             "FOREIGN KEY (id_service) REFERENCES Service(id_service) ON DELETE CASCADE" +
                             ")";
                     stmt.executeUpdate(sqlLink);
+                    
+                    // Add etat column if the table already existed without it
+                    try {
+                        stmt.executeUpdate("ALTER TABLE Evenement_Service ADD COLUMN etat VARCHAR(20) DEFAULT 'EN_ATTENTE'");
+                        System.out.println("Added 'etat' column to 'Evenement_Service' table.");
+                    } catch (Exception e) {}
+
                     System.out.println("✅ Table 'Evenement_Service' créée ou déjà existante.");
                 } catch (Exception e) {
                     e.printStackTrace();

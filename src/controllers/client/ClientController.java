@@ -1,4 +1,4 @@
-package controllers;
+package controllers.client;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -54,12 +54,12 @@ public class ClientController {
     @FXML
     private void handleLogout(ActionEvent event) {
         SessionManager.clearSession();
-        loadFullView("/views/Login.fxml", "Connexion", event);
+        loadFullView("/views/auth/Login.fxml", "Connexion", event);
     }
 
     @FXML
     private void handleViewProfile() {
-        loadCenterView("/views/ClientProfile.fxml");
+        loadCenterView("/views/client/ClientProfile.fxml");
     }
 
     @FXML

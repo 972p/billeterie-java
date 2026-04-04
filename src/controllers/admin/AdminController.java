@@ -1,4 +1,4 @@
-package controllers;
+package controllers.admin;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,24 +46,24 @@ public class AdminController {
 
     @FXML
     private void handleViewUsers() {
-        loadCenterView("/views/AdminUsers.fxml");
+        loadCenterView("/views/admin/AdminUsers.fxml");
     }
 
     @FXML
     private void handleViewPrestataires() {
-        loadCenterView("/views/AdminPrestataires.fxml");
+        loadCenterView("/views/admin/AdminPrestataires.fxml");
     }
 
     @FXML
     private void handleViewReservations() {
-        loadCenterView("/views/AdminReservations.fxml");
+        loadCenterView("/views/admin/AdminReservations.fxml");
     }
 
     @FXML
     private void handleLogout(ActionEvent event) {
         SessionManager.clearSession();
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/views/Login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/views/auth/Login.fxml"));
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());

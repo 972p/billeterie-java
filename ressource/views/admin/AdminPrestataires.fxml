@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminPrestatairesController" spacing="20" alignment="TOP_CENTER" style="-fx-padding: 30; -fx-background-color: #1e1e2e;">
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.admin.AdminPrestatairesController" spacing="20" alignment="TOP_CENTER" style="-fx-padding: 30; -fx-background-color: #1e1e2e;">
     
     <HBox alignment="CENTER_LEFT" spacing="20">
         <Label text="🤝 Gestion des Prestataires" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #bb86fc;"/>

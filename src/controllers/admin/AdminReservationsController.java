@@ -1,4 +1,4 @@
-package controllers;
+package controllers.admin;
 
 import database.MySQLConnection;
 import javafx.beans.property.ReadOnlyStringWrapper;

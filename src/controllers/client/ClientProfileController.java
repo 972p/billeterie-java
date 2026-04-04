@@ -1,4 +1,4 @@
-package controllers;
+package controllers.client;
 
 import DAO.ClientDAO;
 import javafx.event.ActionEvent;
@@ -125,7 +125,7 @@ public class ClientProfileController {
     @FXML
     private void handleRetour(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/views/ClientDashboard.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/views/client/ClientDashboard.fxml"));
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("Espace Client");
 

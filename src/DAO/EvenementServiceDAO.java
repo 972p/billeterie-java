@@ -48,4 +48,16 @@ public class EvenementServiceDAO {
         }
         return servicesIds;
     }
+
+    public void mettreAJourEtat(int evenementId, int serviceId, String etat) throws SQLException {
+        String sql = "UPDATE Evenement_Service SET etat = ? WHERE id_evenement = ? AND id_service = ?";
+
+        try (Connection conn = MySQLConnection.connect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, etat);
+            ps.setInt(2, evenementId);
+            ps.setInt(3, serviceId);
+            ps.executeUpdate();
+        }
+    }
 }

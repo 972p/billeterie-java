@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminUsersController" spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: transparent;">
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.admin.AdminUsersController" spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: transparent;">
     
     <Label text="Gestion des Utilisateurs" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: white;"/>
     
