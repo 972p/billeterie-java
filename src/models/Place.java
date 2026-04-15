@@ -5,18 +5,29 @@ public class Place {
     private int id_salle;
     private int rangee;
     private int numero;
+    private int statut; // 1 = Active, 0 = Inactive
 
-    public Place(int id_place, int id_salle, int rangee, int numero) {
+    public Place(int id_place, int id_salle, int rangee, int numero, int statut) {
         this.id_place = id_place;
         this.id_salle = id_salle;
         this.rangee = rangee;
         this.numero = numero;
+        this.statut = statut;
     }
 
-    public Place(int id_salle, int rangee, int numero) {
+    public Place(int id_place, int id_salle, int rangee, int numero) {
+        this(id_place, id_salle, rangee, numero, 1);
+    }
+
+    public Place(int id_salle, int rangee, int numero, int statut) {
         this.id_salle = id_salle;
         this.rangee = rangee;
         this.numero = numero;
+        this.statut = statut;
+    }
+
+    public Place(int id_salle, int rangee, int numero) {
+        this(0, id_salle, rangee, numero, 1);
     }
 
     public int getId_place() {
@@ -47,7 +58,11 @@ public class Place {
         this.rangee = rangee;
     }
 
-    public void setNumero(int numero) {
-        this.numero = numero;
+    public int getStatut() {
+        return statut;
+    }
+
+    public void setStatut(int statut) {
+        this.statut = statut;
     }
 }

@@ -92,10 +92,13 @@ public class EvenementController {
         chargerPage();
 
         // Recherche dynamique
-        cbFilterCategorie.setItems(FXCollections.observableArrayList("Toutes", "Concert", "Théâtre", "Sport", "Festival", "Cinéma", "Autre"));
+        cbFilterCategorie.setItems(FXCollections.observableArrayList("Toutes", "Concert", "Théâtre", "Sport",
+                "Festival", "Cinéma", "Autre"));
         cbFilterCategorie.setValue("Toutes");
-        event_field.textProperty().addListener((obs, oldValue, newValue) -> filtrerListe(newValue, cbFilterCategorie.getValue()));
-        cbFilterCategorie.valueProperty().addListener((obs, oldVal, newVal) -> filtrerListe(event_field.getText(), newVal));
+        event_field.textProperty()
+                .addListener((obs, oldValue, newValue) -> filtrerListe(newValue, cbFilterCategorie.getValue()));
+        cbFilterCategorie.valueProperty()
+                .addListener((obs, oldVal, newVal) -> filtrerListe(event_field.getText(), newVal));
 
         // Boutons - these will now show alerts as they need a card selection
         reserve_event.setOnAction(e -> montrerAlerte("Veuillez cliquer sur 'Réserver' sur une carte."));
@@ -106,7 +109,7 @@ public class EvenementController {
         if (utils.SessionManager.isAdmin()) {
             create_event.setVisible(true);
             create_event.setOnAction(e -> ouvrirFenetreCreation());
-            
+
             edit_event.setVisible(true);
             delete_event.setVisible(true);
 
@@ -120,7 +123,8 @@ public class EvenementController {
                 btn_espace_client.setVisible(false);
                 btn_espace_client.setManaged(false);
             }
-            // Hide the topBar (logout button inside Evenement.fxml) when inside AdminDashboard
+            // Hide the topBar (logout button inside Evenement.fxml) when inside
+            // AdminDashboard
             if (topBar != null && controllers.admin.AdminController.getInstance() != null) {
                 topBar.setVisible(false);
                 topBar.setManaged(false);
@@ -132,7 +136,7 @@ public class EvenementController {
 
             manage_users.setVisible(false);
             manage_reservations.setVisible(false);
-            
+
             if (btn_espace_client != null) {
                 btn_espace_client.setVisible(true);
                 btn_espace_client.setManaged(true);
@@ -169,7 +173,8 @@ public class EvenementController {
     @FXML
     private void ouvrirEspaceClient() {
         try {
-            javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/client/ClientDashboard.fxml"));
+            javafx.scene.Parent root = javafx.fxml.FXMLLoader
+                    .load(getClass().getResource("/views/client/ClientDashboard.fxml"));
             javafx.stage.Stage stage = (javafx.stage.Stage) btn_espace_client.getScene().getWindow();
             stage.setTitle("Espace Client");
 
@@ -191,13 +196,17 @@ public class EvenementController {
             controllers.admin.AdminController.getInstance().loadCenterView("/views/admin/AdminUsers.fxml");
         } else {
             try {
-                javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/admin/AdminUsers.fxml"));
+                javafx.scene.Parent root = javafx.fxml.FXMLLoader
+                        .load(getClass().getResource("/views/admin/AdminUsers.fxml"));
                 javafx.stage.Stage stage = (javafx.stage.Stage) manage_users.getScene().getWindow();
                 stage.setTitle("Gestion des Utilisateurs");
                 javafx.scene.Scene scene = new javafx.scene.Scene(root);
                 scene.getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
-                stage.setScene(scene); stage.show();
-            } catch (java.io.IOException e) { e.printStackTrace(); }
+                stage.setScene(scene);
+                stage.show();
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -206,13 +215,17 @@ public class EvenementController {
             controllers.admin.AdminController.getInstance().loadCenterView("/views/admin/AdminReservations.fxml");
         } else {
             try {
-                javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/views/admin/AdminReservations.fxml"));
+                javafx.scene.Parent root = javafx.fxml.FXMLLoader
+                        .load(getClass().getResource("/views/admin/AdminReservations.fxml"));
                 javafx.stage.Stage stage = (javafx.stage.Stage) manage_reservations.getScene().getWindow();
                 stage.setTitle("Gestion des Réservations");
                 javafx.scene.Scene scene = new javafx.scene.Scene(root);
                 scene.getStylesheets().add(getClass().getResource("/views/style.css").toExternalForm());
-                stage.setScene(scene); stage.show();
-            } catch (java.io.IOException e) { e.printStackTrace(); }
+                stage.setScene(scene);
+                stage.show();
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -234,7 +247,8 @@ public class EvenementController {
     }
 
     private void refreshEventCards(List<Evenement> events) {
-        if (event_container == null) return;
+        if (event_container == null)
+            return;
         event_container.getChildren().clear();
         for (Evenement ev : events) {
             event_container.getChildren().add(createEventCard(ev));
@@ -253,7 +267,7 @@ public class EvenementController {
         poster.setFitHeight(300);
         poster.setPreserveRatio(false);
         poster.getStyleClass().add("event-card-poster");
-        
+
         // Load image
         String path = ev.getAffiche();
         if (path != null && !path.isEmpty()) {
@@ -273,19 +287,19 @@ public class EvenementController {
 
         javafx.scene.layout.VBox info = new javafx.scene.layout.VBox();
         info.getStyleClass().add("event-card-info");
-        
+
         Label cat = new Label(ev.getCategorie());
         cat.getStyleClass().add("event-card-category");
-        
+
         Label title = new Label(ev.getTitre());
         title.getStyleClass().add("event-card-title");
         title.setWrapText(true);
-        
+
         Label desc = new Label(ev.getDescriptionCourte());
         desc.getStyleClass().add("event-card-description");
         desc.setWrapText(true);
         desc.setMinHeight(40);
-        
+
         Button btnReserve = new Button("Réserver");
         btnReserve.setMaxWidth(Double.MAX_VALUE);
         btnReserve.setOnAction(e -> ouvrirFenetreReservation(ev));
@@ -295,28 +309,28 @@ public class EvenementController {
         if (utils.SessionManager.isAdmin()) {
             javafx.scene.layout.HBox adminActions = new javafx.scene.layout.HBox(10);
             adminActions.setStyle("-fx-padding: 10 0 0 0; -fx-alignment: CENTER;");
-            
+
             Button btnEdit = new Button("Modifier");
             btnEdit.getStyleClass().add("button-secondary");
             btnEdit.setOnAction(e -> modifierEvenementSelectionne(ev));
-            
+
             Button btnDelete = new Button("Supprimer");
             btnDelete.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white;");
             btnDelete.setOnAction(e -> supprimerEvenementSelectionne(ev));
-            
+
             adminActions.getChildren().addAll(btnEdit, btnDelete);
             info.getChildren().add(adminActions);
         }
 
         card.getChildren().addAll(poster, info);
-        
+
         // Clicking the card (anywhere but buttons) shows details
         card.setOnMouseClicked(e -> {
             if (!(e.getTarget() instanceof Button)) {
                 consulterEvenementSelectionne(ev);
             }
         });
-        
+
         return card;
     }
 
@@ -339,14 +353,14 @@ public class EvenementController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choisir une affiche");
         fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif")
-        );
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"));
         File selectedFile = fileChooser.showOpenDialog(owner);
         if (selectedFile != null) {
             try {
                 // Ensure directory exists
                 File dir = new File("ressource/posters");
-                if (!dir.exists()) dir.mkdirs();
+                if (!dir.exists())
+                    dir.mkdirs();
 
                 // Unique filename
                 String extension = selectedFile.getName().substring(selectedFile.getName().lastIndexOf("."));
@@ -389,7 +403,8 @@ public class EvenementController {
         TextField dureeField = new TextField();
         TextField langueField = new TextField();
         TextField ageMinField = new TextField();
-        ComboBox<String> cbCategorie = new ComboBox<>(FXCollections.observableArrayList("Concert", "Théâtre", "Sport", "Festival", "Cinéma", "Autre"));
+        ComboBox<String> cbCategorie = new ComboBox<>(
+                FXCollections.observableArrayList("Concert", "Théâtre", "Sport", "Festival", "Cinéma", "Autre"));
         cbCategorie.setValue("Autre");
 
         ComboBox<Lieu> cbLieu = new ComboBox<>();
@@ -400,18 +415,14 @@ public class EvenementController {
 
         try {
             LieuDAO lieuDAO = new LieuDAO();
-            List<Lieu> lieux = lieuDAO.trouverTous();
-            cbLieu.setItems(FXCollections.observableArrayList(lieux));
+            cbLieu.setItems(FXCollections.observableArrayList(lieuDAO.trouverTous()));
             cbLieu.setConverter(new javafx.util.StringConverter<Lieu>() {
-                @Override
-                public String toString(Lieu lieu) {
-                    return lieu != null ? lieu.getNom() : "";
-                }
-
-                @Override
-                public Lieu fromString(String string) {
-                    return null; // Not needed
-                }
+                @Override public String toString(Lieu l) { return l != null ? l.getNom() : ""; }
+                @Override public Lieu fromString(String s) { return null; }
+            });
+            cbSalle.setConverter(new javafx.util.StringConverter<Salle>() {
+                @Override public String toString(Salle s) { return s != null ? s.getNom() : ""; }
+                @Override public Salle fromString(String s) { return null; }
             });
         } catch (SQLException e) {
             e.printStackTrace();
@@ -424,17 +435,6 @@ public class EvenementController {
                     SalleDAO salleDAO = new SalleDAO();
                     List<Salle> salles = salleDAO.trouverParLieu(newVal.getId_lieu());
                     cbSalle.setItems(FXCollections.observableArrayList(salles));
-                    cbSalle.setConverter(new javafx.util.StringConverter<Salle>() {
-                        @Override
-                        public String toString(Salle salle) {
-                            return salle != null ? salle.getNom() : "";
-                        }
-
-                        @Override
-                        public Salle fromString(String string) {
-                            return null; // Not needed
-                        }
-                    });
                     cbSalle.setDisable(false);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -449,7 +449,6 @@ public class EvenementController {
         try {
             PrestataireDAO prestataireDAO = new PrestataireDAO();
             List<Prestataire> prestataires = prestataireDAO.trouverTous();
-            // Optional empty choice
             prestataires.add(0, new Prestataire(0, "Aucun prestataire", "", "", "", ""));
             cbPrestataire.setItems(FXCollections.observableArrayList(prestataires));
             cbPrestataire.setConverter(new javafx.util.StringConverter<Prestataire>() {
@@ -457,8 +456,11 @@ public class EvenementController {
                 public String toString(Prestataire p) {
                     return p != null ? p.getNom() : "";
                 }
+
                 @Override
-                public Prestataire fromString(String string) { return null; }
+                public Prestataire fromString(String string) {
+                    return null;
+                }
             });
             cbPrestataire.getSelectionModel().select(0);
         } catch (SQLException e) {
@@ -538,11 +540,11 @@ public class EvenementController {
                             ageMin,
                             cbCategorie.getValue());
                     newEv.setAffiche(selectedImagePath[0]);
-                    
+
                     if (cbPrestataire.getValue() != null && cbPrestataire.getValue().getId() > 0) {
                         newEv.setPrestataireId(cbPrestataire.getValue().getId());
                     }
-                    
+
                     return newEv;
                 } catch (NumberFormatException e) {
                     montrerAlerte("Durée et âge minimum doivent être des nombres.");
@@ -555,36 +557,27 @@ public class EvenementController {
 
         result.ifPresent(ev -> {
             try {
-                // 1. Create the Event
-                dao.ajouter(ev);
+                // FIXED: dao.ajouter retourne maintenant l'ID généré directement
+                int generatedEventId = dao.ajouter(ev);
 
-                // We need the new event ID. EvenementDAO.ajouter must set the ID if we use
-                // RETURN_GENERATED_KEYS.
-                // For now, let's assume dao.ajouter sets it or we re-fetch it. If cbLieu and
-                // cbSalle are set:
-                if (cbLieu.getValue() != null && cbSalle.getValue() != null && !dateHeureField.getText().isEmpty()) {
-                    // Re-fetch the newly created event to get its ID using title (hacky, but works
-                    // if titles are unique or latest)
-                    int generatedEventId = ev.getId();
-                    if (generatedEventId == 0) {
-                        try (java.sql.Connection conn = database.MySQLConnection.connect();
-                                java.sql.PreparedStatement ps = conn.prepareStatement(
-                                        "SELECT id_evenement FROM Evenement ORDER BY id_evenement DESC LIMIT 1")) {
-                            java.sql.ResultSet rs = ps.executeQuery();
-                            if (rs.next()) {
-                                generatedEventId = rs.getInt(1);
-                            }
-                        }
-                    }
+                if (generatedEventId == 0) {
+                    montrerAlerte("Erreur : impossible de récupérer l'ID du nouvel évènement.");
+                    return;
+                }
 
-                    // 2. Create the Seance
+                // 2. Créer la Séance avec l'ID fiable
+                if (cbLieu.getValue() != null && cbSalle.getValue() != null) {
                     SeanceDAO seanceDAO = new SeanceDAO();
+                    String dateHeure = dateHeureField.getText().trim();
+                    if (dateHeure.isEmpty()) {
+                        dateHeure = "2024-01-01 00:00:00"; // Valeur par défaut si vide
+                    }
                     Seance newSeance = new Seance(0, generatedEventId, cbLieu.getValue().getId_lieu(),
-                            cbSalle.getValue().getId_salle(), dateHeureField.getText());
+                            cbSalle.getValue().getId_salle(), dateHeure);
                     seanceDAO.ajouter(newSeance);
                 }
 
-                // 3. Link Services
+                // 3. Lier les Services avec l'ID fiable
                 if (ev.getPrestataireId() != null) {
                     EvenementServiceDAO evtSvcDAO = new EvenementServiceDAO();
                     for (javafx.scene.Node node : servicesBox.getChildren()) {
@@ -592,19 +585,7 @@ public class EvenementController {
                             CheckBox chk = (CheckBox) node;
                             if (chk.isSelected()) {
                                 int svcId = (int) chk.getUserData();
-                                // Assuming we have the generatedEventId. If Seance block didn't run, we must fetch it.
-                                int evtId = ev.getId();
-                                if (evtId == 0) {
-                                    try (java.sql.Connection conn = database.MySQLConnection.connect();
-                                         java.sql.PreparedStatement ps = conn.prepareStatement(
-                                                 "SELECT id_evenement FROM Evenement ORDER BY id_evenement DESC LIMIT 1")) {
-                                        java.sql.ResultSet rs = ps.executeQuery();
-                                        if (rs.next()) {
-                                            evtId = rs.getInt(1);
-                                        }
-                                    }
-                                }
-                                evtSvcDAO.lierServiceAEvenement(evtId, svcId);
+                                evtSvcDAO.lierServiceAEvenement(generatedEventId, svcId);
                             }
                         }
                     }
@@ -683,23 +664,40 @@ public class EvenementController {
         TextField dureeField = new TextField(String.valueOf(selected.getDuree()));
         TextField langueField = new TextField(selected.getLangue());
         TextField ageMinField = new TextField(String.valueOf(selected.getAgeMin()));
-        ComboBox<String> cbCategorie = new ComboBox<>(FXCollections.observableArrayList("Concert", "Théâtre", "Sport", "Festival", "Cinéma", "Autre"));
+        ComboBox<String> cbCategorie = new ComboBox<>(
+                FXCollections.observableArrayList("Concert", "Théâtre", "Sport", "Festival", "Cinéma", "Autre"));
         cbCategorie.setValue(selected.getCategorie() != null ? selected.getCategorie() : "Autre");
 
         ComboBox<Lieu> cbLieu = new ComboBox<>();
         ComboBox<Salle> cbSalle = new ComboBox<>();
         cbSalle.setDisable(true);
+        ComboBox<Prestataire> cbPrestataire = new ComboBox<>();
+        VBox servicesBox = new VBox(5);
         TextField dateHeureField = new TextField();
         dateHeureField.setPromptText("YYYY-MM-DD HH:MM:SS");
 
-        // Reference variables to hold current Seance details
-        final int[] currentSeanceId = { -1 };
+        // Set Converters immediately
+        cbLieu.setConverter(new javafx.util.StringConverter<Lieu>() {
+            @Override public String toString(Lieu l) { return l != null ? l.getNom() : ""; }
+            @Override public Lieu fromString(String s) { return null; }
+        });
+        cbSalle.setConverter(new javafx.util.StringConverter<Salle>() {
+            @Override public String toString(Salle s) { return s != null ? s.getNom() : ""; }
+            @Override public Salle fromString(String s) { return null; }
+        });
+        cbPrestataire.setConverter(new javafx.util.StringConverter<Prestataire>() {
+            @Override public String toString(Prestataire p) { return p != null ? p.getNom() : ""; }
+            @Override public Prestataire fromString(String s) { return null; }
+        });
 
+        // Current Seance details
+        final int[] currentSeanceId = { -1 };
         final String[] selectedImagePath = { selected.getAffiche() };
         Button btnChoisirAffiche = new Button("Choisir une affiche");
-        Label affichePathLabel = new Label(selected.getAffiche() != null ? selected.getAffiche() : "Aucune affiche sélectionnée");
+        Label affichePathLabel = new Label(
+                selected.getAffiche() != null ? selected.getAffiche() : "Aucune affiche sélectionnée");
         btnChoisirAffiche.setOnAction(e -> {
-            String path = handleChoisirImage((Stage) dialog.getDialogPane().getScene().getWindow());
+            String path = handleChoisirImage((javafx.stage.Stage) dialog.getDialogPane().getScene().getWindow());
             if (path != null) {
                 selectedImagePath[0] = path;
                 affichePathLabel.setText(path);
@@ -710,17 +708,6 @@ public class EvenementController {
             LieuDAO lieuDAO = new LieuDAO();
             List<Lieu> lieux = lieuDAO.trouverTous();
             cbLieu.setItems(FXCollections.observableArrayList(lieux));
-            cbLieu.setConverter(new javafx.util.StringConverter<Lieu>() {
-                @Override
-                public String toString(Lieu lieu) {
-                    return lieu != null ? lieu.getNom() : "";
-                }
-
-                @Override
-                public Lieu fromString(String string) {
-                    return null;
-                }
-            });
 
             // Try to find the existing Seance
             try (java.sql.Connection conn = database.MySQLConnection.connect();
@@ -751,26 +738,9 @@ public class EvenementController {
                         SalleDAO salleDAO = new SalleDAO();
                         List<Salle> salles = salleDAO.trouverParLieu(cbLieu.getValue().getId_lieu());
                         cbSalle.setItems(FXCollections.observableArrayList(salles));
-                        cbSalle.setConverter(new javafx.util.StringConverter<Salle>() {
-                            @Override
-                            public String toString(Salle salle) {
-                                return salle != null ? salle.getNom() : "";
-                            }
-
-                            @Override
-                            public Salle fromString(String string) {
-                                return null;
-                            }
-                        });
                         cbSalle.setDisable(false);
-
                         // Pre-select Salle
-                        for (Salle s : salles) {
-                            if (s.getId_salle() == existingSalleId) {
-                                cbSalle.getSelectionModel().select(s);
-                                break;
-                            }
-                        }
+                        cbSalle.getSelectionModel().select(new Salle(existingSalleId, 0, "", 0, 0, 0));
                     }
                 }
             }
@@ -785,17 +755,6 @@ public class EvenementController {
                     SalleDAO salleDAO2 = new SalleDAO();
                     List<Salle> salles = salleDAO2.trouverParLieu(newVal.getId_lieu());
                     cbSalle.setItems(FXCollections.observableArrayList(salles));
-                    cbSalle.setConverter(new javafx.util.StringConverter<Salle>() {
-                        @Override
-                        public String toString(Salle salle) {
-                            return salle != null ? salle.getNom() : "";
-                        }
-
-                        @Override
-                        public Salle fromString(String string) {
-                            return null;
-                        }
-                    });
                     cbSalle.setDisable(false);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -805,22 +764,13 @@ public class EvenementController {
             }
         });
 
-        ComboBox<Prestataire> cbPrestataire = new ComboBox<>();
-        VBox servicesBox = new VBox(5);
         List<Integer> linkedServices = new java.util.ArrayList<>();
-        
         try {
             PrestataireDAO prestataireDAO = new PrestataireDAO();
             List<Prestataire> prestataires = prestataireDAO.trouverTous();
             prestataires.add(0, new Prestataire(0, "Aucun prestataire", "", "", "", ""));
             cbPrestataire.setItems(FXCollections.observableArrayList(prestataires));
-            cbPrestataire.setConverter(new javafx.util.StringConverter<Prestataire>() {
-                @Override
-                public String toString(Prestataire p) { return p != null ? p.getNom() : ""; }
-                @Override
-                public Prestataire fromString(String string) { return null; }
-            });
-            
+
             // Preselect
             if (selected.getPrestataireId() != null && selected.getPrestataireId() > 0) {
                 for (Prestataire p : prestataires) {
@@ -848,7 +798,6 @@ public class EvenementController {
                     for (Service svc : services) {
                         CheckBox chk = new CheckBox(svc.getNom() + " (" + svc.getDescription() + ")");
                         chk.setUserData(svc.getId());
-                        // Pre-check if it was linked and we are still selecting the same provider
                         if (linkedServices.contains((Integer) svc.getId()) && newVal.getId() == prevId) {
                             chk.setSelected(true);
                         }
@@ -859,7 +808,7 @@ public class EvenementController {
                 }
             }
         });
-        
+
         // Initial populate for services Box
         if (cbPrestataire.getValue() != null && cbPrestataire.getValue().getId() > 0) {
             try {
@@ -868,10 +817,12 @@ public class EvenementController {
                 for (Service svc : services) {
                     CheckBox chk = new CheckBox(svc.getNom() + " (" + svc.getDescription() + ")");
                     chk.setUserData(svc.getId());
-                    if (linkedServices.contains((Integer) svc.getId())) chk.setSelected(true);
+                    if (linkedServices.contains((Integer) svc.getId()))
+                        chk.setSelected(true);
                     servicesBox.getChildren().add(chk);
                 }
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
 
         GridPane grid = new GridPane();
@@ -919,11 +870,11 @@ public class EvenementController {
                             ageMin,
                             cbCategorie.getValue());
                     editedEv.setAffiche(selectedImagePath[0]);
-                    
+
                     if (cbPrestataire.getValue() != null && cbPrestataire.getValue().getId() > 0) {
                         editedEv.setPrestataireId(cbPrestataire.getValue().getId());
                     }
-                    
+
                     return editedEv;
                 } catch (NumberFormatException e) {
                     montrerAlerte("Durée et âge minimum doivent être des nombres.");
@@ -939,18 +890,22 @@ public class EvenementController {
                 dao.modifier(ev);
 
                 // Also update or create the Seance
-                if (cbLieu.getValue() != null && cbSalle.getValue() != null && !dateHeureField.getText().isEmpty()) {
+                if (cbLieu.getValue() != null && cbSalle.getValue() != null) {
                     SeanceDAO seanceDAO = new SeanceDAO();
+                    String dateHeure = dateHeureField.getText().trim();
+                    if (dateHeure.isEmpty()) {
+                        dateHeure = "2024-01-01 00:00:00"; // Valeur par défaut
+                    }
                     if (currentSeanceId[0] != -1) {
                         // Update existing
                         Seance updatedSeance = new Seance(currentSeanceId[0], ev.getId(),
                                 cbLieu.getValue().getId_lieu(), cbSalle.getValue().getId_salle(),
-                                dateHeureField.getText());
+                                dateHeure);
                         seanceDAO.modifier(updatedSeance);
                     } else {
                         // Create new if there wasn't one
                         Seance newSeance = new Seance(0, ev.getId(), cbLieu.getValue().getId_lieu(),
-                                cbSalle.getValue().getId_salle(), dateHeureField.getText());
+                                cbSalle.getValue().getId_salle(), dateHeure);
                         seanceDAO.ajouter(newSeance);
                     }
                 }
@@ -958,7 +913,7 @@ public class EvenementController {
                 // Update Services
                 EvenementServiceDAO evtSvcDAO = new EvenementServiceDAO();
                 evtSvcDAO.supprimerLiaisonsPourEvenement(ev.getId());
-                
+
                 if (ev.getPrestataireId() != null) {
                     for (javafx.scene.Node node : servicesBox.getChildren()) {
                         if (node instanceof CheckBox) {
@@ -989,7 +944,7 @@ public class EvenementController {
         try {
             // Check if a seance exists for this event
             int idSeance = -1;
-            int idSalle = -1; // Assuming we have to find out which room the event/seance takes place in
+            int idSalle = -1;
 
             try (java.sql.Connection conn = database.MySQLConnection.connect();
                     java.sql.PreparedStatement ps = conn.prepareStatement(
@@ -1021,16 +976,20 @@ public class EvenementController {
             SeatSelectionController controller = loader.getController();
             controller.initData(selected.getId(), idSeance, idSalle);
 
+            // FIXED: gestion correcte de la navigation selon le contexte
             if (!utils.SessionManager.isAdmin() && controllers.client.ClientController.getInstance() != null) {
+                // Client dans le dashboard client
                 controllers.client.ClientController.getInstance().setCenterView(root);
+            } else if (utils.SessionManager.isAdmin() && controllers.admin.AdminController.getInstance() != null) {
+                // Admin dans le dashboard admin
+                controllers.admin.AdminController.getInstance().setCenterView(root);
             } else {
-                javafx.stage.Stage stage = (javafx.stage.Stage) reserve_event.getScene().getWindow();
+                // Fallback standalone (fenêtre séparée)
+                javafx.stage.Stage stage = (javafx.stage.Stage) event_container.getScene().getWindow();
                 stage.setTitle("Sélection des places");
-
                 javafx.scene.Scene scene = new javafx.scene.Scene(root);
                 String css = this.getClass().getResource("/views/style.css").toExternalForm();
                 scene.getStylesheets().add(css);
-
                 stage.setScene(scene);
                 stage.show();
             }
@@ -1056,21 +1015,18 @@ public class EvenementController {
 
         if (res.isPresent() && res.get() == ButtonType.OK) {
             try {
-                dao.supprimer(selected.getId()); // suppression en base
+                dao.supprimer(selected.getId());
 
-                // Si la page actuelle n’a plus qu’un élément (celui qu’on supprime)
-                // et qu’on n’est pas en page 1, on recule d’une page
                 if (eventsData.size() == 1 && page > 1) {
                     page--;
                 }
 
-                chargerPage(); // on recharge la page depuis la base
+                chargerPage();
             } catch (Exception e) {
                 e.printStackTrace();
                 montrerAlerte("Erreur lors de la suppression de l'évènement.");
             }
         }
-
     }
 
     // === Utilitaires ===

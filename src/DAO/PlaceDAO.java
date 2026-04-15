@@ -13,12 +13,13 @@ import java.util.List;
 public class PlaceDAO {
 
     public void ajouter(Place obj) throws SQLException {
-        String sql = "INSERT INTO Place (id_salle, rangee, numero) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Place (id_salle, rangee, numero, statut) VALUES (?, ?, ?, ?)";
         Connection conn = MySQLConnection.connect();
         PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         ps.setInt(1, obj.getId_salle());
         ps.setInt(2, obj.getRangee());
         ps.setInt(3, obj.getNumero());
+        ps.setInt(4, obj.getStatut());
         ps.executeUpdate();
 
         ResultSet rs = ps.getGeneratedKeys();
@@ -28,13 +29,14 @@ public class PlaceDAO {
     }
 
     public void modifier(Place obj) throws SQLException {
-        String sql = "UPDATE Place SET id_salle=?, rangee=?, numero=? WHERE id_place=?";
+        String sql = "UPDATE Place SET id_salle=?, rangee=?, numero=?, statut=? WHERE id_place=?";
         Connection conn = MySQLConnection.connect();
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, obj.getId_salle());
         ps.setInt(2, obj.getRangee());
         ps.setInt(3, obj.getNumero());
-        ps.setInt(4, obj.getId_place());
+        ps.setInt(4, obj.getStatut());
+        ps.setInt(5, obj.getId_place());
         ps.executeUpdate();
     }
 
@@ -59,7 +61,8 @@ public class PlaceDAO {
                     rs.getInt("id_place"),
                     rs.getInt("id_salle"),
                     rs.getInt("rangee"),
-                    rs.getInt("numero")));
+                    rs.getInt("numero"),
+                    rs.getInt("statut")));
         }
         return liste;
     }

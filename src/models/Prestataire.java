@@ -23,4 +23,22 @@ public class Prestataire {
     public String getContact() { return contact; }
     public String getEmail() { return email; }
     public String getMotDePasse() { return motDePasse; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Prestataire that = (Prestataire) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return nom;
+    }
 }

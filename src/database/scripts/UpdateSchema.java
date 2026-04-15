@@ -44,6 +44,14 @@ public class UpdateSchema {
                 System.out.println("Column 'statut' already exists or error: " + e.getMessage());
             }
 
+            // Add nb_places to Salle
+            try {
+                stmt.executeUpdate("ALTER TABLE Salle ADD COLUMN nb_places INT DEFAULT 0");
+                System.out.println("Added 'nb_places' to Salle table.");
+            } catch (Exception e) {
+                System.out.println("Column 'nb_places' already exists or error: " + e.getMessage());
+            }
+
             // Create CodePromo table and insert seed data
             try {
                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS CodePromo (" +
@@ -182,11 +190,19 @@ public class UpdateSchema {
                          System.out.println("Seeded test associations between Events and Services.");
                     }
                 } catch (Exception e) {}
-            } catch (Exception e) {
-                System.out.println("Error creating 'Evenement_Service' table: " + e.getMessage());
-            }
+                } catch (Exception e) {
+                    System.out.println("Error creating 'Evenement_Service' table: " + e.getMessage());
+                }
 
-            System.out.println("Schema updated successfully.");
+                // Add statut to Place
+                try {
+                    stmt.executeUpdate("ALTER TABLE Place ADD COLUMN statut INT DEFAULT 1");
+                    System.out.println("Added 'statut' to Place table.");
+                } catch (Exception e) {
+                    System.out.println("Column 'statut' already exists or error: " + e.getMessage());
+                }
+
+                System.out.println("Schema updated successfully.");
         } catch (Exception e) {
             e.printStackTrace();
         }

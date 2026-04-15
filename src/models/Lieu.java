@@ -36,6 +36,19 @@ public class Lieu {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Lieu lieu = (Lieu) o;
+        return id_lieu == lieu.id_lieu;
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(id_lieu);
+    }
+
+    @Override
     public String toString() {
         return this.nom + " (" + this.ville + ")";
     }

@@ -53,7 +53,8 @@ public class SetupDatabase {
                             "id_lieu INT NOT NULL, " +
                             "nom VARCHAR(100) NOT NULL, " +
                             "nb_rangees INT NOT NULL, " +
-                            "nb_colonnes INT NOT NULL" +
+                            "nb_colonnes INT NOT NULL, " +
+                            "nb_places INT NOT NULL DEFAULT 0" +
                             ")";
                     stmt.executeUpdate(sqlSalle);
                     System.out.println("✅ Table 'Salle' créée ou déjà existante.");
@@ -180,15 +181,15 @@ public class SetupDatabase {
 
                         // 2. Salles de différentes formes
                         java.sql.PreparedStatement psSalle = conn.prepareStatement(
-                                "INSERT INTO Salle (id_lieu, nom, nb_rangees, nb_colonnes) VALUES (?, ?, ?, ?) ",
+                                "INSERT INTO Salle (id_lieu, nom, nb_rangees, nb_colonnes, nb_places) VALUES (?, ?, ?, ?, ?) ",
                                 Statement.RETURN_GENERATED_KEYS);
 
                         Object[][] salles = {
-                                { grandRexId, "Salle Carrée Max", 15, 15 },
-                                { grandRexId, "Salle Panoramique", 5, 25 }, // Très large, peu profonde
-                                { theatreId, "Salle Profonde", 25, 6 }, // Très profonde, peu large
-                                { theatreId, "Petite Salle VIP", 4, 4 }, // Toute petite
-                                { grandRexId, "Salle Standard", 8, 12 }
+                                { grandRexId, "Salle Carrée Max", 15, 15, 225 },
+                                { grandRexId, "Salle Panoramique", 5, 25, 125 }, // Très large, peu profonde
+                                { theatreId, "Salle Profonde", 25, 6, 150 }, // Très profonde, peu large
+                                { theatreId, "Petite Salle VIP", 4, 4, 16 }, // Toute petite
+                                { grandRexId, "Salle Standard", 8, 12, 96 }
                         };
 
                         java.sql.PreparedStatement psPlace = conn
@@ -200,8 +201,10 @@ public class SetupDatabase {
                             psSalle.setString(2, (String) config[1]);
                             int rangees = (Integer) config[2];
                             int colonnes = (Integer) config[3];
+                            int nbPlaces = (Integer) config[4];
                             psSalle.setInt(3, rangees);
                             psSalle.setInt(4, colonnes);
+                            psSalle.setInt(5, nbPlaces);
                             psSalle.executeUpdate();
 
                             java.sql.ResultSet rsSalleId = psSalle.getGeneratedKeys();

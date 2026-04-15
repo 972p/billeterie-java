@@ -47,9 +47,11 @@ public class EvenementDAO {
         return evenements;
     }
 
-    public void ajouter(Evenement obj) throws SQLException {
+    // FIXED: retourne maintenant l'ID généré au lieu de void
+    public int ajouter(Evenement obj) throws SQLException {
         String sql = "INSERT INTO Evenement " +
-                "(titre, description_courte, description_longue, duree, langue, age_min, categorie, affiche, id_prestataire) " +
+                "(titre, description_courte, description_longue, duree, langue, age_min, categorie, affiche, id_prestataire) "
+                +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         Connection conn = MySQLConnection.connect();
         PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -69,16 +71,18 @@ public class EvenementDAO {
         }
 
         ps.executeUpdate();
-        
-        // Retrieve generated ID to ensure the insert worked
+
+        // FIXED: on récupère et retourne vraiment l'ID généré
+        int generatedId = 0;
         ResultSet rs = ps.getGeneratedKeys();
         if (rs.next()) {
-            // Since we can't easily mutate the ID in the Evenement object if it's final,
-            // we will let EvenementController handle it by querying DESC LIMIT 1 like before
+            generatedId = rs.getInt(1);
         }
-        
+
+        rs.close();
         ps.close();
         conn.close();
+        return generatedId;
     }
 
     public void modifier(Evenement obj) throws SQLException {
@@ -122,7 +126,7 @@ public class EvenementDAO {
     public Evenement trouver(int id) throws SQLException {
         String sql = "SELECT * FROM Evenement WHERE id_evenement = ?";
         try (Connection conn = MySQLConnection.connect();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -149,8 +153,7 @@ public class EvenementDAO {
                 rs.getString("langue"),
                 rs.getInt("age_min"),
                 cat != null ? cat : "Autre",
-                rs.getString("affiche")
-        );
+                rs.getString("affiche"));
 
         int pId = rs.getInt("id_prestataire");
         if (!rs.wasNull()) {

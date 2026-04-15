@@ -8,42 +8,68 @@
       fx:controller="controllers.admin.AdminGestionSalleController"
       spacing="30" style="-fx-padding: 30; -fx-background-color: transparent;">
 
-    <!-- COLONNE GAUCHE : formulaire -->
-    <VBox spacing="12" prefWidth="260" style="-fx-background-color: #2b2b3c; -fx-padding: 20; -fx-background-radius: 10;">
-        <Label text="🏛 Créer une Salle" style="-fx-text-fill: #bb86fc; -fx-font-size: 18; -fx-font-weight: bold;"/>
+    <!-- COLONNE GAUCHE : formulaire premium -->
+    <VBox spacing="15" prefWidth="300" style="-fx-background-color: rgba(43, 43, 60, 0.8); -fx-padding: 25; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);">
+        <Label text="🏛 Designer de Salle" style="-fx-text-fill: #bb86fc; -fx-font-size: 20; -fx-font-weight: bold;"/>
+        
+        <VBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="Lieu" style="-fx-text-fill: #ffffff; -fx-opacity: 0.7; -fx-font-size: 11;"/>
+            <ComboBox fx:id="comboLieu" maxWidth="1.7976931348623157E308" promptText="Choisir un lieu" styleClass="combo-box-modern"/>
+        </VBox>
 
-        <Label text="Lieu :" style="-fx-text-fill: #cccccc;"/>
-        <ComboBox fx:id="comboLieu" maxWidth="1.7976931348623157E308" promptText="Choisir un lieu"/>
+        <VBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="Nom de la salle" style="-fx-text-fill: #ffffff; -fx-opacity: 0.7; -fx-font-size: 11;"/>
+            <TextField fx:id="champNom" promptText="ex: Grande Scène" styleClass="text-field-modern"/>
+        </VBox>
 
-        <Label text="Nom de la salle :" style="-fx-text-fill: #cccccc;"/>
-        <TextField fx:id="champNom" promptText="ex: Salle A"/>
+        <HBox spacing="10">
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label text="Rangées" style="-fx-text-fill: #ffffff; -fx-opacity: 0.7; -fx-font-size: 11;"/>
+                <TextField fx:id="champRangees" promptText="Rangées" styleClass="text-field-modern"/>
+            </VBox>
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label text="Colonnes" style="-fx-text-fill: #ffffff; -fx-opacity: 0.7; -fx-font-size: 11;"/>
+                <TextField fx:id="champColonnes" promptText="Colonnes" styleClass="text-field-modern"/>
+            </VBox>
+        </HBox>
 
-        <Label text="Nombre de rangées :" style="-fx-text-fill: #cccccc;"/>
-        <TextField fx:id="champRangees" promptText="ex: 10"/>
+        <Separator opacity="0.1"/>
 
-        <Label text="Nombre de colonnes :" style="-fx-text-fill: #cccccc;"/>
-        <TextField fx:id="champColonnes" promptText="ex: 15"/>
+        <Label fx:id="labelCapacite" text="Capacité : 0 places"
+               style="-fx-text-fill: #03dac6; -fx-font-weight: bold; -fx-font-size: 14;"/>
+        
+        <Label text="Cliquez sur un siège pour le désactiver/réactiver (gris = inactif)." wrapText="true"
+               style="-fx-text-fill: #888; -fx-font-size: 11; -fx-font-style: italic;"/>
 
-        <Label fx:id="labelCapacite" text="Capacité totale : 0 places"
-               style="-fx-text-fill: #4CAF50; -fx-font-weight: bold; -fx-font-size: 13;"/>
+        <Region VBox.vgrow="ALWAYS"/>
 
-        <Button fx:id="btnSauvegarder" text="💾  Sauvegarder la salle"
+        <Button fx:id="btnSauvegarder" text="💾 Sauvegarder le layout"
                 onAction="#handleSauvegarder"
                 maxWidth="1.7976931348623157E308"
-                styleClass="button-primary"/>
+                styleClass="button-primary"
+                style="-fx-background-color: linear-gradient(to right, #6200ee, #3700b3); -fx-text-fill: white; -fx-padding: 12;"/>
     </VBox>
 
-    <!-- COLONNE DROITE : prévisualisation de la grille -->
-    <VBox spacing="10" HBox.hgrow="ALWAYS">
-        <Label text="Prévisualisation de la salle" style="-fx-text-fill: #bb86fc; -fx-font-size: 16; -fx-font-weight: bold;"/>
-        <Label text="🎬 Écran" style="-fx-text-fill: #888; -fx-font-size: 12;" HBox.hgrow="ALWAYS"/>
+    <!-- COLONNE DROITE : prévisualisation interactive -->
+    <VBox spacing="20" HBox.hgrow="ALWAYS" alignment="TOP_CENTER">
+        <VBox alignment="CENTER" spacing="5">
+            <Label text="PLAN DE LA SALLE" style="-fx-text-fill: #bb86fc; -fx-font-size: 14; -fx-font-weight: bold; -fx-letter-spacing: 2;"/>
+            <StackPane fx:id="stageIndicator" prefHeight="40" maxWidth="600"
+                    style="-fx-background-color: linear-gradient(to bottom, #3c3c4c, #1e1e2e); -fx-background-radius: 50 50 10 10; -fx-border-color: #bb86fc; -fx-border-width: 0 0 2 0;">
+                <children>
+                    <Label text="SCÈNE / ÉCRAN" textAlignment="CENTER" style="-fx-text-fill: #bb86fc; -fx-font-size: 10; -fx-font-weight: bold; -fx-padding: 10 0 0 0;"/>
+                </children>
+            </StackPane>
+        </VBox>
 
-        <ScrollPane fx:id="scrollGrille" fitToWidth="false" fitToHeight="false"
-                    style="-fx-background-color: transparent; -fx-background: #1e1e2e;"
-                    prefHeight="450" VBox.vgrow="ALWAYS">
-            <GridPane fx:id="grillePreview" hgap="5" vgap="5" alignment="CENTER">
-                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            </GridPane>
+        <ScrollPane fx:id="scrollGrille" fitToWidth="true" fitToHeight="true"
+                    style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;"
+                    VBox.vgrow="ALWAYS">
+            <StackPane alignment="CENTER">
+                <GridPane fx:id="grillePreview" hgap="6" vgap="6" alignment="CENTER">
+                    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                </GridPane>
+            </StackPane>
         </ScrollPane>
     </VBox>
 

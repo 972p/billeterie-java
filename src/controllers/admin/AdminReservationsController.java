@@ -1,18 +1,13 @@
 package controllers.admin;
 
 import database.MySQLConnection;
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.util.Callback;
 
 import DAO.BilletDAO;
 
@@ -80,7 +75,7 @@ public class AdminReservationsController {
     @FXML
     private TableColumn<ReservationView, String> colDateAchat;
     @FXML
-    private TableColumn<ReservationView, Void> colAction;
+    private TableColumn<ReservationView, ReservationView> colAction;
 
     @FXML
     private javafx.scene.chart.PieChart pieChartVentes;
@@ -100,11 +95,14 @@ public class AdminReservationsController {
 
     @FXML
     public void initialize() {
-        colEvent.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getEventTitre()));
-        colDateHeure.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getSeanceDate()));
-        colClient.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getClientNom()));
-        colPlace.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getPlaceInfo()));
-        colDateAchat.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getDateAchat()));
+        colEvent.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEventTitre()));
+        colDateHeure.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSeanceDate()));
+        colClient.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getClientNom()));
+        colPlace.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPlaceInfo()));
+        colDateAchat.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDateAchat()));
+
+        // Crucial: Bind the action column to the object itself
+        colAction.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue()));
 
         setupActionColumn();
         chargerReservations();
@@ -185,7 +183,9 @@ public class AdminReservationsController {
                 ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                String placeInfo = "R" + rs.getInt("rangee") + " P" + rs.getInt("numero");
+                int r = rs.getInt("rangee");
+                int n = rs.getInt("numero");
+                String placeInfo = (char)('A' + r - 1) + String.valueOf(n);
                 String clientInfo = rs.getString("nom") + " (" + rs.getString("email") + ")";
 
                 toutesLesReservations.add(new ReservationView(
@@ -210,36 +210,29 @@ public class AdminReservationsController {
     }
 
     private void setupActionColumn() {
-        Callback<TableColumn<ReservationView, Void>, TableCell<ReservationView, Void>> cellFactory = new Callback<>() {
-            @Override
-            public TableCell<ReservationView, Void> call(final TableColumn<ReservationView, Void> param) {
-                final TableCell<ReservationView, Void> cell = new TableCell<>() {
-                    private final Button btnCancel = new Button("Annuler");
+        colAction.setCellFactory(param -> new TableCell<ReservationView, ReservationView>() {
+            private final Button btnCancel = new Button("Annuler");
 
-                    {
-                        btnCancel.setStyle("-fx-background-color: #ffaa00; -fx-text-fill: white; -fx-cursor: hand;");
-                        btnCancel.setOnAction(event -> {
-                            ReservationView res = getTableView().getItems().get(getIndex());
-                            annulerReservation(res);
-                        });
-                    }
-
-                    @Override
-                    public void updateItem(Void item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            HBox managebtn = new HBox(btnCancel);
-                            managebtn.setStyle("-fx-alignment: center");
-                            setGraphic(managebtn);
-                        }
-                    }
-                };
-                return cell;
+            {
+                btnCancel.setStyle("-fx-background-color: #ffaa00; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 5;");
+                btnCancel.setOnAction(event -> {
+                    ReservationView res = getTableView().getItems().get(getIndex());
+                    annulerReservation(res);
+                });
             }
-        };
-        colAction.setCellFactory(cellFactory);
+
+            @Override
+            protected void updateItem(ReservationView item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    HBox box = new HBox(btnCancel);
+                    box.setStyle("-fx-alignment: center");
+                    setGraphic(box);
+                }
+            }
+        });
     }
 
     private void annulerReservation(ReservationView res) {
@@ -253,7 +246,7 @@ public class AdminReservationsController {
         alert.showAndWait().ifPresent(response -> {
             if (response == javafx.scene.control.ButtonType.OK) {
                 try {
-                    billetDAO.supprimer(res.getIdBillet());
+                    billetDAO.annulerBillet(res.getIdBillet());
                     // Recharge les données et remet le filtre à jour
                     chargerReservations();
                     configurerFiltre();
