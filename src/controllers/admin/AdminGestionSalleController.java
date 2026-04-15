@@ -1,108 +1,116 @@
 package controllers.admin;
 
+import DAO.LieuDAO;
 import DAO.SalleDAO;
+import models.Lieu;
 import models.Salle;
-import javafx.application.Application;
-import javafx.geometry.Insets;
+import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.sql.SQLException;
+import java.util.List;
 
-public class AdminGestionSalleController extends Application {
+public class AdminGestionSalleController {
 
-    private SalleDAO salleDAO = new SalleDAO(); // Ton DAO
-    private GridPane grillePreview = new GridPane(); // La fameuse grille
-    private Label labelCapacite = new Label("Capacité totale : 0 places");
+    @FXML
+    private ComboBox<Lieu> comboLieu;
+    @FXML
+    private TextField champNom;
+    @FXML
+    private TextField champRangees;
+    @FXML
+    private TextField champColonnes;
+    @FXML
+    private Label labelCapacite;
+    @FXML
+    private GridPane grillePreview;
 
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Administration - Créer une Salle");
+    private SalleDAO salleDAO = new SalleDAO();
+    private LieuDAO lieuDAO = new LieuDAO();
 
-        // --- 1. LES CHAMPS DU FORMULAIRE ---
-        TextField champNom = new TextField();
-        champNom.setPromptText("Nom de la salle");
+    @FXML
+    public void initialize() {
+        try {
+            List<Lieu> lieux = lieuDAO.trouverTous();
+            comboLieu.getItems().addAll(lieux);
+        } catch (SQLException e) {
+            showError("Impossible de charger les lieux : " + e.getMessage());
+        }
 
-        TextField champRangees = new TextField();
-        champRangees.setPromptText("Nombre de rangées");
+        champRangees.textProperty().addListener((obs, oldVal, newVal) -> dessinerGrille());
+        champColonnes.textProperty().addListener((obs, oldVal, newVal) -> dessinerGrille());
 
-        TextField champColonnes = new TextField();
-        champColonnes.setPromptText("Nombre de colonnes");
-
-        Button btnSauvegarder = new Button("Sauvegarder la salle");
-
-        // --- 2. METTRE À JOUR LA GRILLE EN TEMPS RÉEL ---
-        // On écoute les changements dans les champs de texte pour dessiner la grille
-        // instantanément
-        champRangees.textProperty()
-                .addListener((obs, oldVal, newVal) -> dessinerGrille(champRangees.getText(), champColonnes.getText()));
-        champColonnes.textProperty()
-                .addListener((obs, oldVal, newVal) -> dessinerGrille(champRangees.getText(), champColonnes.getText()));
-
-        // --- 3. L'ACTION DU BOUTON SAUVEGARDER ---
-        btnSauvegarder.setOnAction(e -> {
-            try {
-                String nom = champNom.getText();
-                int rangees = Integer.parseInt(champRangees.getText());
-                int colonnes = Integer.parseInt(champColonnes.getText());
-                int idLieu = 1; // À remplacer par ton choix de lieu réel
-
-                Salle nouvelleSalle = new Salle(idLieu, nom, rangees, colonnes);
-                salleDAO.ajouter(nouvelleSalle);
-
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "La salle a été créée avec succès !");
-                alert.showAndWait();
-
-            } catch (NumberFormatException ex) {
-                new Alert(Alert.AlertType.ERROR, "Veuillez entrer des nombres valides pour les dimensions.").show();
-            } catch (SQLException ex) {
-                new Alert(Alert.AlertType.ERROR, "Erreur base de données : " + ex.getMessage()).show();
-            }
-        });
-
-        // --- 4. MISE EN PAGE (Layout) ---
-        grillePreview.setHgap(5); // Espace horizontal entre les sièges
-        grillePreview.setVgap(5); // Espace vertical entre les sièges
         grillePreview.setAlignment(Pos.CENTER);
-
-        VBox formulaire = new VBox(10, new Label("Nom :"), champNom, new Label("Rangées :"), champRangees,
-                new Label("Colonnes :"), champColonnes, btnSauvegarder, labelCapacite);
-        formulaire.setPadding(new Insets(20));
-        formulaire.setPrefWidth(250);
-
-        HBox root = new HBox(20, formulaire, grillePreview);
-        root.setPadding(new Insets(20));
-
-        Scene scene = new Scene(root, 800, 500);
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
-    // --- 5. LA LOGIQUE DE DESSIN DE LA GRILLE ---
-    private void dessinerGrille(String textRangees, String textColonnes) {
-        grillePreview.getChildren().clear(); // On nettoie l'ancienne grille
+    @FXML
+    private void handleSauvegarder() {
+        Lieu lieuChoisi = comboLieu.getValue();
+        if (lieuChoisi == null) {
+            showError("Veuillez sélectionner un lieu.");
+            return;
+        }
+
+        String nom = champNom.getText().trim();
+        if (nom.isEmpty()) {
+            showError("Veuillez entrer un nom pour la salle.");
+            return;
+        }
+
+        int rangees, colonnes;
+        try {
+            rangees = Integer.parseInt(champRangees.getText());
+            colonnes = Integer.parseInt(champColonnes.getText());
+        } catch (NumberFormatException e) {
+            showError("Veuillez entrer des nombres valides pour les dimensions.");
+            return;
+        }
+
+        if (rangees <= 0 || colonnes <= 0) {
+            showError("Les dimensions doivent être des entiers positifs.");
+            return;
+        }
 
         try {
-            int rangees = Integer.parseInt(textRangees);
-            int colonnes = Integer.parseInt(textColonnes);
+            Salle nouvelleSalle = new Salle(lieuChoisi.getId_lieu(), nom, rangees, colonnes);
+            salleDAO.ajouter(nouvelleSalle);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Succès");
+            alert.setHeaderText("Salle créée avec succès !");
+            alert.setContentText(
+                    "Nom : " + nom + "\n" +
+                            "Lieu : " + lieuChoisi.getNom() + "\n" +
+                            "Dimensions : " + rangees + " rangées × " + colonnes + " colonnes\n" +
+                            "Capacité totale : " + (rangees * colonnes) + " places");
+            alert.showAndWait();
+            reinitialiserFormulaire();
+
+        } catch (SQLException e) {
+            showError("Erreur base de données : " + e.getMessage());
+        }
+    }
+
+    private void dessinerGrille() {
+        grillePreview.getChildren().clear();
+        try {
+            int rangees = Integer.parseInt(champRangees.getText());
+            int colonnes = Integer.parseInt(champColonnes.getText());
 
             if (rangees > 0 && colonnes > 0) {
-                labelCapacite.setText("Capacité totale : " + (rangees * colonnes) + " places");
-                int numeroSiege = 1;
+                int capacite = rangees * colonnes;
+                String forme = (rangees == colonnes) ? " (carrée)" : " (rectangulaire)";
+                labelCapacite.setText("Capacité totale : " + capacite + " places" + forme);
 
-                // Double boucle pour placer les boutons (sièges) dans le GridPane
+                int numeroSiege = 1;
                 for (int r = 0; r < rangees; r++) {
                     for (int c = 0; c < colonnes; c++) {
                         Button siege = new Button(String.valueOf(numeroSiege));
-                        siege.setPrefSize(40, 40); // Taille fixe pour faire de jolis carrés
-                        siege.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-cursor: hand;");
-
-                        // L'ajout dans le GridPane se fait par (colonne, ligne)
+                        siege.setPrefSize(38, 38);
+                        siege.setStyle(
+                                "-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 10; -fx-cursor: hand; -fx-background-radius: 4;");
                         grillePreview.add(siege, c, r);
                         numeroSiege++;
                     }
@@ -115,7 +123,19 @@ public class AdminGestionSalleController extends Application {
         }
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    private void reinitialiserFormulaire() {
+        champNom.clear();
+        champRangees.clear();
+        champColonnes.clear();
+        comboLieu.setValue(null);
+        grillePreview.getChildren().clear();
+        labelCapacite.setText("Capacité totale : 0 places");
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erreur");
+        alert.setContentText(message);
+        alert.show();
     }
 }

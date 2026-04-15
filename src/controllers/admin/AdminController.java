@@ -18,8 +18,10 @@ public class AdminController {
 
     private static AdminController instance;
 
-    @FXML private BorderPane mainContainer;
-    @FXML private Label lblAdminName;
+    @FXML
+    private BorderPane mainContainer;
+    @FXML
+    private Label lblAdminName;
 
     public AdminController() {
         instance = this;
@@ -35,7 +37,6 @@ public class AdminController {
         if (currentUser != null) {
             lblAdminName.setText(currentUser.getNom() + " (Admin)");
         }
-        // Load Evenements as the default view
         loadCenterView("/views/evenement/Evenement.fxml");
     }
 
@@ -57,6 +58,11 @@ public class AdminController {
     @FXML
     private void handleViewReservations() {
         loadCenterView("/views/admin/AdminReservations.fxml");
+    }
+
+    @FXML
+    private void handleViewGestionSalles() {
+        loadCenterView("/views/admin/AdminGestionSalle.fxml");
     }
 
     @FXML
@@ -89,6 +95,7 @@ public class AdminController {
     }
 
     public void setCenterView(Parent view) {
-        if (mainContainer != null) mainContainer.setCenter(view);
+        if (mainContainer != null)
+            mainContainer.setCenter(view);
     }
 }

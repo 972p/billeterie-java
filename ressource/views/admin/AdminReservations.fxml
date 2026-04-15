@@ -4,15 +4,21 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.admin.AdminReservationsController" spacing="20" alignment="CENTER" style="-fx-padding: 30; -fx-background-color: transparent;">
-    
+
     <Label text="Gestion des Réservations" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: white;"/>
-    
+
     <HBox spacing="20" alignment="CENTER">
         <javafx.scene.chart.PieChart fx:id="pieChartVentes" title="Billets vendus" prefWidth="350" prefHeight="250"/>
         <javafx.scene.chart.BarChart fx:id="barChartRevenus" title="Chiffre d'Affaires (€)" prefWidth="400" prefHeight="250">
             <xAxis><javafx.scene.chart.CategoryAxis label="Évènements" /></xAxis>
             <yAxis><javafx.scene.chart.NumberAxis label="Revenus (€)" /></yAxis>
         </javafx.scene.chart.BarChart>
+    </HBox>
+
+    <!-- FILTRE PAR FILM -->
+    <HBox spacing="12" alignment="CENTER_LEFT" style="-fx-padding: 0 10 0 10;">
+        <Label text="Filtrer par film :" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;"/>
+        <ComboBox fx:id="filtreFilm" prefWidth="250" promptText="Tous les évenements"/>
     </HBox>
 
     <TableView fx:id="reservations_table" VBox.vgrow="ALWAYS" style="-fx-min-width: 800; -fx-min-height: 400;">
