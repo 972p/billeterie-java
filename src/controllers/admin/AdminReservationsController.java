@@ -26,15 +26,17 @@ public class AdminReservationsController {
         private String clientNom;
         private String placeInfo;
         private String dateAchat;
+        private String statut;
 
         public ReservationView(int idBillet, String eventTitre, String seanceDate, String clientNom, String placeInfo,
-                String dateAchat) {
+                String dateAchat, String statut) {
             this.idBillet = idBillet;
             this.eventTitre = eventTitre;
             this.seanceDate = seanceDate;
             this.clientNom = clientNom;
             this.placeInfo = placeInfo;
             this.dateAchat = dateAchat;
+            this.statut = statut;
         }
 
         public int getIdBillet() {
@@ -59,6 +61,10 @@ public class AdminReservationsController {
 
         public String getDateAchat() {
             return dateAchat;
+        }
+
+        public String getStatut() {
+            return statut;
         }
     }
 
@@ -170,7 +176,7 @@ public class AdminReservationsController {
     private void chargerReservations() {
         toutesLesReservations.clear();
 
-        String query = "SELECT b.id_billet, e.titre, s.date_heure, c.nom, c.email, p.rangee, p.numero, b.date_achat " +
+        String query = "SELECT b.id_billet, e.titre, s.date_heure, c.nom, c.email, p.rangee, p.numero, b.date_achat, b.statut " +
                 "FROM Billet b " +
                 "JOIN Seance s ON b.id_seance = s.id_seance " +
                 "JOIN Evenement e ON s.id_evenement = e.id_evenement " +
@@ -194,7 +200,8 @@ public class AdminReservationsController {
                         rs.getString("date_heure"),
                         clientInfo,
                         placeInfo,
-                        rs.getString("date_achat")));
+                        rs.getString("date_achat"),
+                        rs.getString("statut")));
             }
 
             // Affiche toutes les réservations par défaut
@@ -227,6 +234,15 @@ public class AdminReservationsController {
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
+                    if ("ANNULE".equals(item.getStatut())) {
+                        btnCancel.setText("Annulé");
+                        btnCancel.setDisable(true);
+                        btnCancel.setStyle("-fx-background-color: #555555; -fx-text-fill: white; -fx-background-radius: 5;");
+                    } else {
+                        btnCancel.setText("Annuler");
+                        btnCancel.setDisable(false);
+                        btnCancel.setStyle("-fx-background-color: #ffaa00; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 5;");
+                    }
                     HBox box = new HBox(btnCancel);
                     box.setStyle("-fx-alignment: center");
                     setGraphic(box);

@@ -1,0 +1,14 @@
+# Fichiers compilés
+*.class
+bin/
+out/
+
+# Fichiers temporaires de compilation
+sources.txt
+
+# Fichiers système
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes

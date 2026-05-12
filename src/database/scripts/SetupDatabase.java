@@ -1,6 +1,7 @@
 package database.scripts;
 
 
+import database.MySQLConnection;
 import java.sql.Connection;
 import java.sql.Statement;
 

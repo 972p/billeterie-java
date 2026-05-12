@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "StripeService",
+            "request": "launch",
+            "mainClass": "utils.StripeService",
+            "projectName": "billeterie-java_afec63c9"
+        },
+        {
+            "type": "java",
             "name": "TestAddEvenement",
             "request": "launch",
             "mainClass": "TestAddEvenement",

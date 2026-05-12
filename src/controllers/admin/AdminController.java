@@ -61,6 +61,11 @@ public class AdminController {
     }
 
     @FXML
+    private void handleViewTransactions() {
+        loadCenterView("/views/admin/AdminTransactions.fxml");
+    }
+
+    @FXML
     private void handleViewGestionSalles() {
         loadCenterView("/views/admin/AdminGestionSalle.fxml");
     }

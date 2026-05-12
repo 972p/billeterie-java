@@ -19,13 +19,6 @@ public class Place {
         this(id_place, id_salle, rangee, numero, 1);
     }
 
-    public Place(int id_salle, int rangee, int numero, int statut) {
-        this.id_salle = id_salle;
-        this.rangee = rangee;
-        this.numero = numero;
-        this.statut = statut;
-    }
-
     public Place(int id_salle, int rangee, int numero) {
         this(0, id_salle, rangee, numero, 1);
     }

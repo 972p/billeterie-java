@@ -25,6 +25,8 @@ public class AdminUsersController {
     @FXML
     private TableColumn<Client, String> colNom;
     @FXML
+    private TableColumn<Client, String> colPrenom;
+    @FXML
     private TableColumn<Client, String> colEmail;
     @FXML
     private TableColumn<Client, String> colRole;
@@ -36,7 +38,20 @@ public class AdminUsersController {
 
     @FXML
     public void initialize() {
-        colNom.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getNom()));
+        colNom.setCellValueFactory(data -> {
+            String fullName = data.getValue().getNom();
+            if (fullName == null) return new ReadOnlyStringWrapper("");
+            String[] parts = fullName.split(" ", 2);
+            return new ReadOnlyStringWrapper(parts[0]);
+        });
+        
+        colPrenom.setCellValueFactory(data -> {
+            String fullName = data.getValue().getNom();
+            if (fullName == null) return new ReadOnlyStringWrapper("");
+            String[] parts = fullName.split(" ", 2);
+            return new ReadOnlyStringWrapper(parts.length > 1 ? parts[1] : "");
+        });
+
         colEmail.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getEmail()));
         colRole.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getRole()));
 

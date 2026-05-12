@@ -202,6 +202,24 @@ public class UpdateSchema {
                     System.out.println("Column 'statut' already exists or error: " + e.getMessage());
                 }
 
+                try {
+                    stmt.executeUpdate("ALTER TABLE Billet MODIFY COLUMN date_achat DATETIME");
+                    System.out.println("Modified 'date_achat' to DATETIME in Billet table.");
+                } catch (Exception e) {}
+
+                // Create PaiementStripe table for tracking Stripe refunds
+                try {
+                    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS PaiementStripe (" +
+                            "date_achat DATETIME NOT NULL, " +
+                            "id_client INT NOT NULL, " +
+                            "stripe_payment_id VARCHAR(100) NOT NULL, " +
+                            "PRIMARY KEY (date_achat, id_client)" +
+                            ")");
+                    System.out.println("Created/Verified 'PaiementStripe' table.");
+                } catch (Exception e) {
+                    System.out.println("Error creating 'PaiementStripe' table: " + e.getMessage());
+                }
+
                 System.out.println("Schema updated successfully.");
         } catch (Exception e) {
             e.printStackTrace();

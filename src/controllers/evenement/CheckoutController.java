@@ -128,6 +128,18 @@ public class CheckoutController {
                         imgPoster.setImage(new Image(getClass().getResource("/" + path).toExternalForm()));
                     }
                 }
+
+                // Ajustement dynamique de la taille de l'affiche pour libérer de la place
+                int nbPlaces = selectedSeats.size();
+                if (nbPlaces >= 4) {
+                    imgPoster.setFitHeight(100.0);
+                } else if (nbPlaces == 3) {
+                    imgPoster.setFitHeight(150.0);
+                } else if (nbPlaces == 2) {
+                    imgPoster.setFitHeight(180.0);
+                } else {
+                    imgPoster.setFitHeight(250.0); // Taille normale pour 1 place
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -246,6 +258,8 @@ public class CheckoutController {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Vous devez être connecté.");
             return;
         }
+        
+        String stripePaymentId = null;
 
         if (useBalance) {
             if (currentUser.getSolde() < totalAmount) {
@@ -267,13 +281,33 @@ public class CheckoutController {
             String cvv = txtCvv.getText().trim();
 
             if (card.isEmpty() || exp.isEmpty() || cvv.isEmpty()) {
-                showAlert(Alert.AlertType.WARNING, "Erreur", "Veuillez remplir tous les champs bancaires fictifs.");
+                showAlert(Alert.AlertType.WARNING, "Erreur", "Veuillez remplir tous les champs bancaires.");
                 return;
             }
-            if (card.length() < 10) {
+            if (card.length() < 14) {
                 showAlert(Alert.AlertType.ERROR, "Paiement Refusé", "Numéro de carte invalide.");
                 return;
             }
+
+            String[] expParts = exp.split("/");
+            if (expParts.length != 2) {
+                showAlert(Alert.AlertType.ERROR, "Paiement Refusé", "Format d'expiration invalide (utilisez MM/YY).");
+                return;
+            }
+
+            String expMonth = expParts[0].trim();
+            String expYear = expParts[1].trim();
+            if (expYear.length() == 2) {
+                expYear = "20" + expYear;
+            }
+
+            // Appel à l'API Stripe en mode test
+            String stripePaymentIdStr = utils.StripeService.processPayment(totalAmount, card, expMonth, expYear, cvv);
+            if (stripePaymentIdStr == null) {
+                showAlert(Alert.AlertType.ERROR, "Paiement Stripe Refusé", "Le paiement a été refusé. Vérifiez vos informations (utilisez la carte de test Stripe 4242... avec une date future).");
+                return;
+            }
+            stripePaymentId = stripePaymentIdStr;
         }
 
         try {
@@ -313,6 +347,18 @@ public class CheckoutController {
                             String.valueOf(rs.getInt("numero")), rs.getDouble("prix"), "VALIDE", currentDate
                         ));
                     }
+                }
+            }
+
+            if (stripePaymentId != null) {
+                try (Connection conn = MySQLConnection.connect();
+                     PreparedStatement ps = conn.prepareStatement("INSERT INTO PaiementStripe (date_achat, id_client, stripe_payment_id) VALUES (?, ?, ?)")) {
+                    ps.setString(1, currentDate);
+                    ps.setInt(2, currentUser.getId());
+                    ps.setString(3, stripePaymentId);
+                    ps.executeUpdate();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 

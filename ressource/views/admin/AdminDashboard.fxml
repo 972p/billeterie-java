@@ -38,6 +38,7 @@
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleViewUsers" styleClass="button-secondary" text="👥  Gestion Utilisateurs" />
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleViewPrestataires" styleClass="button-secondary" text="🤝  Gestion Prestataires" />
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleViewReservations" styleClass="button-secondary" text="📊  Gestion Réservations" />
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleViewTransactions" styleClass="button-secondary" text="💳  Transactions Clients" />
             <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleViewGestionSalles" styleClass="button-secondary" text="🏛  Gestion Salles" />
          </children>
       </VBox>
