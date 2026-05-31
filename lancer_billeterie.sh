@@ -16,27 +16,44 @@ fi
 if [ ! -f "billeterie.jar" ]; then
     echo "📦 Archive billeterie.jar introuvable. Génération automatique en cours..."
     
-    # Détection du SDK JavaFX local de développement pour la compilation
-    DEV_JFX="/Users/favelas/JavaFX/javafx-sdk-21.0.9/lib"
-    if [ -d "$DEV_JFX" ]; then
+    # Détection du SDK JavaFX pour la compilation
+    JFX_LIB=""
+    if [ -n "$JAVAFX_HOME" ] && [ -d "$JAVAFX_HOME/lib" ]; then
+        JFX_LIB="$JAVAFX_HOME/lib"
+    elif [ -d "/Users/favelas/JavaFX/javafx-sdk-21.0.9/lib" ]; then
+        JFX_LIB="/Users/favelas/JavaFX/javafx-sdk-21.0.9/lib"
+    fi
+
+    if [ -n "$JFX_LIB" ]; then
         find src -name "*.java" > sources.txt
-        javac -d bin -cp "lib/*:$DEV_JFX/*" @sources.txt
+        javac -d bin -cp "lib/*:$JFX_LIB/*" @sources.txt
         cp src/config.properties bin/
         cp -r ressource/* bin/
         jar cvfm billeterie.jar MANIFEST.MF -C bin .
         echo "✅ Archive billeterie.jar générée avec succès !"
     else
-        echo "❌ Erreur : SDK JavaFX introuvable pour recompiler l'application."
-        exit 1
+        # Tentative de compilation sans JavaFX externe (au cas où le JDK inclut déjà JavaFX)
+        echo "⚠️ Chemin JavaFX SDK introuvable. Tentative de compilation avec le JDK par défaut..."
+        find src -name "*.java" > sources.txt
+        if javac -d bin -cp "lib/*" @sources.txt 2>/dev/null; then
+            cp src/config.properties bin/
+            cp -r ressource/* bin/
+            jar cvfm billeterie.jar MANIFEST.MF -C bin .
+            echo "✅ Archive billeterie.jar générée avec succès !"
+        else
+            echo "❌ Erreur : SDK JavaFX introuvable et impossible de compiler le projet."
+            echo "Veuillez définir la variable d'environnement JAVAFX_HOME pointant vers votre dossier JavaFX SDK."
+            exit 1
+        fi
     fi
 fi
 
 # 3. Détection du chemin vers les modules JavaFX pour l'exécution
 JFX_PATH=""
-if [ -d "/Users/favelas/JavaFX/javafx-sdk-21.0.9/lib" ]; then
-    JFX_PATH="/Users/favelas/JavaFX/javafx-sdk-21.0.9/lib"
-elif [ -n "$JAVAFX_HOME" ]; then
+if [ -n "$JAVAFX_HOME" ] && [ -d "$JAVAFX_HOME/lib" ]; then
     JFX_PATH="$JAVAFX_HOME/lib"
+elif [ -d "/Users/favelas/JavaFX/javafx-sdk-21.0.9/lib" ]; then
+    JFX_PATH="/Users/favelas/JavaFX/javafx-sdk-21.0.9/lib"
 fi
 
 # 4. Lancement de l'application

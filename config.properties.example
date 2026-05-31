@@ -1,0 +1,12 @@
+# Fichier de configuration de la base de données pour Billeterie Java
+# Pour personnaliser ces valeurs, copiez ce fichier sous le nom de 'config.properties'
+# dans le même dossier que 'billeterie.jar' ou à la racine du projet.
+
+# URL de connexion JDBC (Spécifiez votre hôte et votre port si nécessaire, ex: 3306 pour Windows ou Wamp/Xampp)
+db.url=jdbc:mysql://localhost:8889/bdd_evenementielle
+
+# Utilisateur MySQL
+db.username=root
+
+# Mot de passe de la base de données
+db.password=root
